@@ -14,6 +14,7 @@ public class Mech : MonoBehaviour
 
     public void ReCharge()
     {
+        gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer"); // set object to layer ActivatedInteractionLayer if it is activated
         isActivate = true;
     }
 
@@ -24,6 +25,7 @@ public class Mech : MonoBehaviour
 
     public bool getActivate()
     {
+        
         return isActivate;
     }
 }

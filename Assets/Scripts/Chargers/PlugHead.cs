@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class PlugHead : MonoBehaviour
 {
-    [HideInInspector]
-    public Transform player;
-
     private bool isConnected;
 
     private Collider2D coll;
@@ -17,18 +14,6 @@ public class PlugHead : MonoBehaviour
         coll = GetComponent<Collider2D>();
     }
 
-    private void Update()
-    {
-        if(player != null)
-        {
-            transform.position = player.position;
-        }
-    }
-
-    public void SetPlayerNull()
-    {
-        player = null;
-    }
 
     public void SetConnected()
     {

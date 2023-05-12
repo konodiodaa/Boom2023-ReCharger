@@ -12,25 +12,127 @@ public class PowerVolume : MonoBehaviour
     public int PowerCurrent;
 
     private Text Power_text;
+    private Text hint_text;
+
+    private bool interactionAva;
 
     private bool isCarried;
-    private PlugHead PH;
+    private CarriableObject co;
+
+    [SerializeField]
+    private Collider2D targetCollider;
+
     private void Awake()
     {
-        Power_text = transform.Find("Canvas").transform.GetComponentInChildren<Text>();
+        interactionAva = false;
+
+        Power_text = transform.Find("Canvas").transform.Find("PowerText").GetComponent<Text>();
+        hint_text = transform.Find("Canvas").transform.Find("ChargeHint").GetComponent<Text>();
     }
 
     private void Update()
     {
         Power_text.text = PowerCurrent.ToString();
         winCheck();
+
+        CollisionCheck(); // get interactable object
+        CollisionHandler(); // handle collision
+        CollisionInteraction(); // handle interaction
+
+        if(targetCollider == null && Input.GetButtonDown("Interact") && isCarried )
+        {
+            isCarried = false;
+            co.GetComponent<CarriableObject>().SetTargetNull();
+        }
     }
 
     public void PowerChange(int value)
     {
         PowerCurrent += value;
+    }
 
+    private void CollisionCheck()
+    {
+        Collider2D collider = Physics2D.OverlapCircle(transform.position, 1.0f,LayerMask.GetMask("InteractionLayer"));
+        if (collider != null)
+            targetCollider = collider;
+        else
+            targetCollider = null;
 
+    }
+
+    private void CollisionHandler()
+    {
+        if (targetCollider == null)
+        {
+            hint_text.gameObject.SetActive(false);
+            return;
+        }
+
+        if (targetCollider.tag == "Charger")
+        {
+             interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E to Recharge";
+        }
+        else if (targetCollider.tag == "Mech")
+        {
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E to Charge the Mech";
+        }
+        else if (targetCollider.tag == "PlugHead" && !isCarried)
+        {
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E Carry the Plug";
+        }
+        else if (targetCollider.tag == "Socket" && isCarried && co != null)
+        {
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E to Insert Plug";
+        }
+    }
+
+    private void CollisionInteraction()
+    {
+        if (!interactionAva || targetCollider == null) return;
+
+        if(Input.GetButtonDown("Interact"))
+        {
+            if (targetCollider.tag == "Mech")
+            {
+                int required = targetCollider.transform.GetComponent<Mech>().GetRequired();
+                if (required <= PowerCurrent && !targetCollider.transform.GetComponent<Mech>().getActivate())
+                {
+                    PowerCurrent -= required;
+                    targetCollider.transform.GetComponent<Mech>().ReCharge();
+                }
+            }
+            else if (targetCollider.tag == "Charger")
+            {
+                PowerCurrent += targetCollider.transform.GetComponent<Charger>().DisCharge();
+                PowerCurrent = Mathf.Clamp(PowerCurrent, 0, PowerRequired);
+            }
+            else if (targetCollider.tag == "PlugHead" && !isCarried)
+            {
+                co = targetCollider.transform.GetComponent<CarriableObject>();
+                co.BeCarried(transform);
+                isCarried = true;
+            }
+            else if (targetCollider.tag == "Socket" && isCarried && co != null)
+            {
+                PlugHead ph = co.GetComponent<PlugHead>();
+                if(ph != null)
+                {
+                    isCarried = false;
+                    targetCollider.gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer");
+                    co.target = targetCollider.transform;
+                    ph.SetConnected();
+                }
+            }
+        }
     }
 
     private void winCheck()
@@ -38,36 +140,6 @@ public class PowerVolume : MonoBehaviour
         if (PowerCurrent >= PowerRequired)
         {
             EventCenter.Broadcast(EventDefine.Win);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.tag == "Charger")
-        {
-            PowerCurrent += collision.transform.GetComponent<Charger>().DisCharge();
-            PowerCurrent = Mathf.Clamp(PowerCurrent,0,PowerRequired); 
-        }
-        else if(collision.tag == "Mech")
-        {
-            int required = collision.transform.GetComponent<Mech>().GetRequired();
-            if (required <= PowerCurrent && !collision.transform.GetComponent<Mech>().getActivate())
-            {
-                PowerCurrent -= required;
-                collision.transform.GetComponent<Mech>().ReCharge();
-            }
-        }
-        else if(collision.tag == "PlugHead" && !isCarried)
-        {
-            PH = collision.transform.GetComponent<PlugHead>();
-            PH.player = transform;
-            isCarried = true;
-        }
-        else if(collision.tag == "Socket" && isCarried && PH != null)
-        {
-            isCarried = false;
-            PH.player = collision.transform;
-            PH.SetConnected();
         }
     }
 
