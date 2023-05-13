@@ -10,6 +10,8 @@ TagManager:
   - Socket
   - PlugHead
   - Enemy
+  - LinkedPlug
+  - Switch
   layers:
   - Default
   - TransparentFX

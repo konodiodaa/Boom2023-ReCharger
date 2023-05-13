@@ -71,7 +71,7 @@ public class PowerVolume : MonoBehaviour
 
         if (targetCollider.tag == "Charger")
         {
-             interactionAva = true;
+            interactionAva = true;
             hint_text.gameObject.SetActive(true);
             hint_text.text = "Press E to Recharge";
         }
@@ -88,6 +88,18 @@ public class PowerVolume : MonoBehaviour
             hint_text.text = "Press E Carry the Plug";
         }
         else if (targetCollider.tag == "Socket" && isCarried && co != null)
+        {
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E to Insert Plug";
+        }
+        else if (targetCollider.tag == "LinkedPlug" && isCarried && co != null)
+        {
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = "Press E to Insert Plug";
+        }
+        else if (targetCollider.tag == "Switch" && isCarried && co != null)
         {
             interactionAva = true;
             hint_text.gameObject.SetActive(true);
@@ -124,12 +136,45 @@ public class PowerVolume : MonoBehaviour
             else if (targetCollider.tag == "Socket" && isCarried && co != null)
             {
                 PlugHead ph = co.GetComponent<PlugHead>();
-                if(ph != null)
+                if (ph != null)
                 {
                     isCarried = false;
                     targetCollider.gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer");
                     co.target = targetCollider.transform;
                     ph.SetConnected();
+                }
+            }
+            else if (targetCollider.tag == "LinkedPlug" && isCarried && co != null)
+            {
+                PlugHead ph = co.GetComponent<PlugHead>();
+                if (ph != null)
+                {
+                    isCarried = false;
+                    targetCollider.gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer");
+                    co.target = targetCollider.transform;
+                    ph.SetConnected();
+                    targetCollider.gameObject.GetComponent<LinkedPlug>().Power();
+                }
+            }
+            else if (targetCollider.tag == "Switch" && isCarried && co != null)
+            {
+                PlugHead ph = co.GetComponent<PlugHead>();
+                if (ph != null)
+                {
+                    isCarried = false;
+                    //targetCollider.gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer");
+                    co.target = targetCollider.transform;
+                    ph.SetConnected();
+                    //Debug.Log("Switch Case 1");
+                    targetCollider.gameObject.GetComponent<Switch>().Power();
+                }
+            }
+            else if (targetCollider.tag == "Switch")
+            {
+                //Debug.Log("Switch Case 2");
+                if (targetCollider.gameObject.GetComponent<Switch>().powered)
+                {
+                    targetCollider.gameObject.GetComponent<Switch>().TurnSwitch();
                 }
             }
         }
