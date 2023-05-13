@@ -9,6 +9,7 @@ TagManager:
   - Mech
   - Socket
   - PlugHead
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -17,9 +18,9 @@ TagManager:
   - Water
   - UI
   - Ground
-  - 
-  - 
-  - 
+  - InteractionLayer
+  - ActivatedInteractionLayer
+  - AttackLayer
   - 
   - 
   - 
