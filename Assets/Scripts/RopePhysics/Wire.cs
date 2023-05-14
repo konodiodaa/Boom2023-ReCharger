@@ -4,18 +4,13 @@ using System.Linq;
 using UnityEngine;
 
 namespace RopePhysics{
-    public class Wire: MonoBehaviour{
+    public class Wire : MonoBehaviour{
 
-        [Min(1)]
-        public int segCount = 3;
+        [Min(1)] public int segCount = 3;
 
         public GameObject segPref;
 
-        public List<WireSegment> segments = new ();
-
-        public bool ReachedMaximumLength(){
-            return false;
-        }
+        public List<WireSegment> segments = new();
 
         private void Awake(){
             WireSegment prev = null;
@@ -24,12 +19,14 @@ namespace RopePhysics{
                 var o = Instantiate(segPref, transform, false);
                 o.transform.position = cur;
                 segments.Add(o.GetComponent<WireSegment>());
-                if(prev != null) prev.SetNextSegment(segments[^1]);
+                if (prev != null) segments[^1].SetPrevSegment(prev);
                 prev = segments[^1];
-                cur.x += prev.Length;
+                cur.x += prev.Length * 1.1f;
             }
         }
-        
-        
+
+        public Vector2 GetStartPoint(){
+            return transform.position;
+        }
     }
 }

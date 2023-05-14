@@ -19,26 +19,13 @@ namespace RopePhysics{
             _joint = GetComponent<HingeJoint2D>();
         }
 
-        public void FixedUpdate(){
-            
-        }
-
-        private void Simulate(){
-        }
-
-        private Vector2 ComputeForce(WireSegment other){
-            Vector2 force = Vector2.zero;
-            
-            return force;
-        }
-
         public void SetPrevSegment(WireSegment newPrev){
             prev = newPrev;
+            _joint.connectedBody = prev._body;
         }
 
         public void SetNextSegment(WireSegment newNext){
             next = newNext;
-            _joint.connectedBody = next._body;
         }
     }
 }
