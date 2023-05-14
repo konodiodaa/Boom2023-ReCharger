@@ -1444,11 +1444,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _width: 0.1
+  _ropeStiffness: 100
   _color: {r: 0, g: 0, b: 0, a: 1}
-  _segmentCount: 50
-  _segmentLength: 0.25
+  _segmentCount: 100
+  _segmentLength: 0.07
   _forceGravity: {x: 0, y: -1}
-  _solveStep: 20
+  _solveStep: 10
 --- !u!1 &797901867
 GameObject:
   m_ObjectHideFlags: 0

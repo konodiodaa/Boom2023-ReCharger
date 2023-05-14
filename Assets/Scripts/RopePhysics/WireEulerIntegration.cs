@@ -27,9 +27,10 @@ public class WireEulerIntegration : MonoBehaviour
     [SerializeField] private LayerMask _collisionMask;
 
     [SerializeField] private float _width = 0.1f;
+    [SerializeField] private float _ropeStiffness = 2.0f;
     [SerializeField] private Color _color = Color.black;
 
-    [SerializeField] private int _segmentCount = 30;
+    [Min(3)] [SerializeField] private int _segmentCount = 30;
     [SerializeField] private float _segmentLength = 0.25f;
 
     [SerializeField] private Vector2 _forceGravity = new Vector2(0f, -1.0f);
@@ -38,9 +39,12 @@ public class WireEulerIntegration : MonoBehaviour
     private List<RopeSegment> _segments = new List<RopeSegment>();
     private LineRenderer _cuttedLineRenderer;
     private LineRenderer _lineRenderer;
-    
+    private Rigidbody2D _playerRB;
+
     private int _wireCuttedIndex = -2;
     public Action OnWireCut;
+    
+
 
     private void Awake()
     {
@@ -86,11 +90,14 @@ public class WireEulerIntegration : MonoBehaviour
             initPosition = Vector2.Lerp(startPosition, endPosition, (float)i / _segmentCount);
             _segments.Add(new RopeSegment(initPosition));
         }
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        _playerRB = player.GetComponent<Rigidbody2D>();
     }
     private void FixedUpdate()
     {
         Simulate();
         DrawRope();
+        ApplyPullForce();
     }
    
     private void DrawRope()
@@ -143,11 +150,13 @@ public class WireEulerIntegration : MonoBehaviour
         }
         for(int i = 0; i < _solveStep; i++)
         {
+            ApplySegmentPullConstraint();
             ApplyConstraint();
+            ApplySegmentPullConstraint();
         }
     }
 
-    private void ApplyConstraint()
+    private void ApplySegmentPullConstraint()
     {
         RopeSegment firstSegment = _segments[0];
         firstSegment.CurrPos = _startPoint.position;
@@ -157,7 +166,7 @@ public class WireEulerIntegration : MonoBehaviour
         lastSegment.CurrPos = _endPoint.position;
         _segments[_segments.Count - 1] = lastSegment;
 
-        for(int i = 0; i < _segmentCount - 1; i++)
+        for (int i = 0; i < _segmentCount - 1; i++)
         {
             RopeSegment currSegment = _segments[i];
             RopeSegment nextSegment = _segments[i + 1];
@@ -167,11 +176,11 @@ public class WireEulerIntegration : MonoBehaviour
             float deviate = Mathf.Abs(dist - _segmentLength);
             Vector2 changeDir = Vector2.zero;
 
-            if(dist > _segmentLength)
+            if (dist > _segmentLength)
             {
                 changeDir = (currSegment.CurrPos - nextSegment.CurrPos).normalized;
             }
-            else if(dist < _segmentLength)
+            else if (dist < _segmentLength)
             {
                 changeDir = (nextSegment.CurrPos - currSegment.CurrPos).normalized;
             }
@@ -184,6 +193,17 @@ public class WireEulerIntegration : MonoBehaviour
                 _segments[i] = currSegment;
                 _segments[i + 1] = nextSegment;
             }
+        }
+    }
+    private void ApplyConstraint()
+    {
+       
+        for(int i = 0; i < _segmentCount - 1; i++)
+        {
+            RopeSegment currSegment = _segments[i];
+            RopeSegment nextSegment = _segments[i + 1];
+
+            
             //Collision Physics Simulation.
             Collider2D hitCollider = Physics2D.OverlapCircle(currSegment.CurrPos, _width, _collisionMask);
             if (hitCollider)
@@ -251,6 +271,35 @@ public class WireEulerIntegration : MonoBehaviour
             }
         }
     }
+
+    private void ApplyPullForce()
+    {
+        if(GetStretchFactor() > 1)
+        {
+            Vector2 pullDir = (_segments[^2].CurrPos - _segments[^1].CurrPos).normalized;
+            //_playerRB.velocity += pullDir * _ropeStiffness * (GetStretchFactor() - 1);
+            _playerRB.AddForce(pullDir * _ropeStiffness * (GetStretchFactor() - 1));
+        }
+    }
+    public float GetLength()
+    {
+        float totalLength = 0;
+        for (int i = 0; i < this._segmentCount - 1; i++)
+        {
+            RopeSegment firstSeg = _segments[i];
+            RopeSegment secondSeg = _segments[i + 1];
+
+            totalLength += Vector2.Distance(firstSeg.CurrPos, secondSeg.CurrPos);
+        }
+
+        return totalLength;
+    }
+
+    public float GetStretchFactor()
+    {
+        return GetLength() / (_segmentCount * _segmentLength);
+    }
+
     public void OnDrawGizmos()
     {
         for (int i = 0; i < this._segments.Count; i++)
