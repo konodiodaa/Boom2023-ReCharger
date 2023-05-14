@@ -115,8 +115,8 @@ public class WireEulerIntegration : MonoBehaviour
                 changeDir = (nextSegment.CurrPos - currSegment.CurrPos).normalized;
             }
 
-            currSegment.CurrPos -= changeDir * deviate * 0.5f;
-            nextSegment.CurrPos += changeDir * deviate * 0.5f;
+            currSegment.CurrPos -= changeDir * (deviate * 0.5f);
+            nextSegment.CurrPos += changeDir * (deviate * 0.5f);
             _segments[i] = currSegment;
             _segments[i + 1] = nextSegment;
 
