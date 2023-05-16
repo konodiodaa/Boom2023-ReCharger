@@ -115,8 +115,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyCounterForce(){
         if (!coll.onGround && _counterForce.y > 0){
-            var force = new Vector2(0, _counterForce.y);
-            rb.AddForce(force);
+            // var force = new Vector2(0, _counterForce.y);
+            rb.AddForce(_counterForce);
         }
         _counterForce = Vector2.zero;
     }
