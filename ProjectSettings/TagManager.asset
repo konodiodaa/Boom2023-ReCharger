@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - LinkedPlug
   - Switch
+  - Plug2
   layers:
   - Default
   - TransparentFX
@@ -43,7 +44,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Carried
   - WireSeg
   m_SortingLayers:
   - name: Default

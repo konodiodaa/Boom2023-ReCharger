@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WireEulerIntegration : MonoBehaviour
 {
-    public struct RopeSegment
+    public class RopeSegment
     {
         public Vector2 CurrPos;
         public Vector2 PrevPos;
@@ -14,10 +14,8 @@ public class WireEulerIntegration : MonoBehaviour
             CurrPos = initPos;
             PrevPos = initPos;
         }
-
-
     }
-
+    
     private LineRenderer _lineRenderer;
     private List<RopeSegment> _segments = new List<RopeSegment>();
     [SerializeField] private Transform _startPoint;
@@ -31,6 +29,8 @@ public class WireEulerIntegration : MonoBehaviour
 
     [SerializeField] private Vector2 _forceGravity = new Vector2(0f, -1.0f);
     [SerializeField] private int _solveStep = 30;
+
+    public float segmentMass = 1f;
 
     private void Awake()
     {
@@ -89,22 +89,17 @@ public class WireEulerIntegration : MonoBehaviour
 
     private void ApplyConstraint()
     {
-        RopeSegment firstSegment = _segments[0];
-        firstSegment.CurrPos = _startPoint.position;
-        _segments[0] = firstSegment;
-
-        RopeSegment lastSegment = _segments[_segmentCount - 1];
-        lastSegment.CurrPos = _endPoint.position;
-        _segments[_segments.Count - 1] = lastSegment;
+        _segments[0].CurrPos = _startPoint.position;
+        _segments[^1].CurrPos = _endPoint.position;
 
         for(int i = 0; i < _segmentCount - 1; i++)
         {
-            RopeSegment currSegment = _segments[i];
-            RopeSegment nextSegment = _segments[i + 1];
+            var currSegment = _segments[i];
+            var nextSegment = _segments[i + 1];
 
-            float dist = (currSegment.CurrPos - nextSegment.CurrPos).magnitude;
-            float deviate = Mathf.Abs(dist - _segmentLength);
-            Vector2 changeDir = Vector2.zero;
+            var dist = (currSegment.CurrPos - nextSegment.CurrPos).magnitude;
+            var deviate = Mathf.Abs(dist - _segmentLength);
+            var changeDir = Vector2.zero;
 
             if(dist > _segmentLength)
             {
@@ -119,7 +114,6 @@ public class WireEulerIntegration : MonoBehaviour
             nextSegment.CurrPos += changeDir * (deviate * 0.5f);
             _segments[i] = currSegment;
             _segments[i + 1] = nextSegment;
-
         }
     }
 

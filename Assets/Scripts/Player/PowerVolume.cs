@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Chargers;
+using Player;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,10 +25,14 @@ public class PowerVolume : MonoBehaviour
     [SerializeField]
     private Collider2D targetCollider;
 
+    private ICarriable _carriable;
+
+    public PlayerMovement movement;
+    
     private void Awake()
     {
         interactionAva = false;
-
+        movement = GetComponent<PlayerMovement>();
         Power_text = transform.Find("Canvas").transform.Find("PowerText").GetComponent<Text>();
         hint_text = transform.Find("Canvas").transform.Find("ChargeHint").GetComponent<Text>();
     }
@@ -34,7 +41,8 @@ public class PowerVolume : MonoBehaviour
     {
         Power_text.text = PowerCurrent.ToString();
         winCheck();
-
+        
+        // Move To Fixed Update?
         CollisionCheck(); // get interactable object
         CollisionHandler(); // handle collision
         CollisionInteraction(); // handle interaction
@@ -44,6 +52,11 @@ public class PowerVolume : MonoBehaviour
             isCarried = false;
             co.GetComponent<CarriableObject>().SetTargetNull();
         }
+        
+    }
+
+    private void FixedUpdate(){
+        _carriable?.UpdatePosition(transform);
     }
 
     public void PowerChange(int value)
@@ -63,6 +76,9 @@ public class PowerVolume : MonoBehaviour
 
     private void CollisionHandler()
     {
+        if (_carriable != null){
+            return;
+        }
         if (targetCollider == null)
         {
             hint_text.gameObject.SetActive(false);
@@ -92,6 +108,12 @@ public class PowerVolume : MonoBehaviour
             interactionAva = true;
             hint_text.gameObject.SetActive(true);
             hint_text.text = "Press E to Insert Plug";
+        } else{
+            var interactable = targetCollider.GetComponent<IInteractable>();
+            if (interactable is not{ }) return;
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = interactable.GetInstruction();
         }
     }
 
@@ -99,7 +121,7 @@ public class PowerVolume : MonoBehaviour
     {
         if (!interactionAva || targetCollider == null) return;
 
-        if(Input.GetButtonDown("Interact"))
+        if(Input.GetButtonUp("Interact"))
         {
             if (targetCollider.tag == "Mech")
             {
@@ -131,8 +153,29 @@ public class PowerVolume : MonoBehaviour
                     co.target = targetCollider.transform;
                     ph.SetConnected();
                 }
+            } else{
+                var interactable = targetCollider.GetComponent<IInteractable>();
+                if (interactable == null){
+                    if (_carriable != null){ //带着东西呢
+                        DropDownCurrentCarriable();
+                    }
+                    return;
+                }
+                interactable.Interact(this);
             }
         }
+        
+        
+    }
+
+    public void PickUp(ICarriable carriable){
+        _carriable = carriable;
+        carriable.OnPickUp(this);
+    }
+
+    public void DropDownCurrentCarriable(){
+        _carriable.OnDropDown();
+        _carriable = null;
     }
 
     private void winCheck()

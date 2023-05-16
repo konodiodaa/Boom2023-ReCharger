@@ -44,6 +44,11 @@ public class PlayerMovement : MonoBehaviour
     private float moveInput;
     private int faceDir;
 
+    private Vector2 _counterForce = Vector2.zero;
+    public float counterForceFactor = 0.1f;
+    
+    private Vector2 _totalForce = Vector2.zero;
+
 
     void Awake()
     {
@@ -105,8 +110,17 @@ public class PlayerMovement : MonoBehaviour
         // Move the character
         if (!isDashing)
             rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+        ApplyCounterForce();
     }
-     
+
+    private void ApplyCounterForce(){
+        if (!coll.onGround && _counterForce.y > 0){
+            var force = new Vector2(0, _counterForce.y);
+            rb.AddForce(force);
+        }
+        _counterForce = Vector2.zero;
+    }
+
     private void Dash()
     {
         if (Input.GetButtonDown("Dash"))
@@ -157,5 +171,9 @@ public class PlayerMovement : MonoBehaviour
                 isDashing = false;
             }
         }
+    }
+
+    public void AddCounterForce(Vector2 force){
+        _counterForce += force * counterForceFactor;
     }
 }
