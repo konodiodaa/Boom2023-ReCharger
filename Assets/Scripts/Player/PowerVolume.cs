@@ -108,13 +108,7 @@ public class PowerVolume : MonoBehaviour
             interactionAva = true;
             hint_text.gameObject.SetActive(true);
             hint_text.text = "Press E to Insert Plug";
-        } else{
-            var interactable = targetCollider.GetComponent<IInteractable>();
-            if (interactable is not{ }) return;
-            interactionAva = true;
-            hint_text.gameObject.SetActive(true);
-            hint_text.text = interactable.GetInstruction();
-        }
+        } 
         else if (targetCollider.tag == "LinkedPlug" && isCarried && co != null)
         {
             interactionAva = true;
@@ -126,6 +120,12 @@ public class PowerVolume : MonoBehaviour
             interactionAva = true;
             hint_text.gameObject.SetActive(true);
             hint_text.text = "Press E to Insert Plug";
+        }else{
+            var interactable = targetCollider.GetComponent<IInteractable>();
+            if (interactable is not{ }) return;
+            interactionAva = true;
+            hint_text.gameObject.SetActive(true);
+            hint_text.text = interactable.GetInstruction();
         }
     }
 
@@ -133,49 +133,29 @@ public class PowerVolume : MonoBehaviour
     {
         if (!interactionAva || targetCollider == null) return;
 
-        if(Input.GetButtonUp("Interact"))
-        {
-            if (targetCollider.tag == "Mech")
-            {
+        if (Input.GetButtonUp("Interact")){
+            if (targetCollider.tag == "Mech"){
                 int required = targetCollider.transform.GetComponent<Mech>().GetRequired();
-                if (required <= PowerCurrent && !targetCollider.transform.GetComponent<Mech>().getActivate())
-                {
+                if (required <= PowerCurrent && !targetCollider.transform.GetComponent<Mech>().getActivate()){
                     PowerCurrent -= required;
                     targetCollider.transform.GetComponent<Mech>().ReCharge();
                 }
-            }
-            else if (targetCollider.tag == "Charger")
-            {
+            } else if (targetCollider.tag == "Charger"){
                 PowerCurrent += targetCollider.transform.GetComponent<Charger>().DisCharge();
                 PowerCurrent = Mathf.Clamp(PowerCurrent, 0, PowerRequired);
-            }
-            else if (targetCollider.tag == "PlugHead" && !isCarried)
-            {
+            } else if (targetCollider.tag == "PlugHead" && !isCarried){
                 co = targetCollider.transform.GetComponent<CarriableObject>();
                 co.BeCarried(transform);
                 isCarried = true;
-            }
-            else if (targetCollider.tag == "Socket" && isCarried && co != null)
-            {
+            } else if (targetCollider.tag == "Socket" && isCarried && co != null){
                 PlugHead ph = co.GetComponent<PlugHead>();
-                if (ph != null)
-                {
+                if (ph != null){
                     isCarried = false;
                     targetCollider.gameObject.layer = LayerMask.NameToLayer("ActivatedInteractionLayer");
                     co.target = targetCollider.transform;
                     ph.SetConnected();
                 }
-            } else{
-                var interactable = targetCollider.GetComponent<IInteractable>();
-                if (interactable == null){
-                    if (_carriable != null){ //带着东西呢
-                        DropDownCurrentCarriable();
-                    }
-                    return;
-                }
-                interactable.Interact(this);
-            }
-            else if (targetCollider.tag == "LinkedPlug" && isCarried && co != null)
+            } else if (targetCollider.tag == "LinkedPlug" && isCarried && co != null)
             {
                 PlugHead ph = co.GetComponent<PlugHead>();
                 if (ph != null)
@@ -207,10 +187,19 @@ public class PowerVolume : MonoBehaviour
                 {
                     targetCollider.gameObject.GetComponent<Switch>().TurnSwitch();
                 }
+            } else {
+                var interactable = targetCollider.GetComponent<IInteractable>();
+                if (interactable == null){
+                    if (_carriable != null){ //带着东西呢
+                        DropDownCurrentCarriable();
+                    }
+
+                    return;
+                }
+
+                interactable.Interact(this);
             }
         }
-        
-        
     }
 
     public void PickUp(ICarriable carriable){
