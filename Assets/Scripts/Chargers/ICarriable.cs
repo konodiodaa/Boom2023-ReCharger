@@ -5,6 +5,8 @@ namespace Chargers{
         bool IsCarried{ get; }
         void OnPickUp(PowerVolume powerVolume);
         void OnDropDown();
-        void UpdatePosition(Transform playerTransform);
+        // void UpdatePosition(Transform playerTransform);
+        
+        Rigidbody2D Body{ get; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Player{
     public interface IInteractable{
-        string GetInstruction();
+        string GetInstruction(PowerVolume volume);
         void Interact(PowerVolume volume);
     }
 }

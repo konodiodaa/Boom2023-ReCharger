@@ -41,9 +41,9 @@ namespace RopePhysics{
 
             inst = Instantiate(plugPref, transform, false);
             inst.transform.position = endPosition.position; 
-            if ((endPosition.position - transform.position).magnitude > _integration2.GetTheoreticalLength() * maxLengthFactor){
+            if ((endPosition.position - transform.position).magnitude > _integration2.GetMaxLength() * maxLengthFactor){
                 inst.transform.localPosition = (endPosition.position - transform.position).normalized *
-                                               (_integration2.GetTheoreticalLength() * maxLengthFactor);
+                                               (_integration2.GetMaxLength() * maxLengthFactor);
             }
             _plugs[1] = inst.GetComponent<Plug2>();
             
@@ -60,5 +60,11 @@ namespace RopePhysics{
         public void LoseElectricity(){
             _integration2.SetColor(Color.black);
         }
+
+        public float CurrentLength => _integration2.CurrentLength;
+
+        public float MaxLength => _integration2.GetMaxLength();
+
+        public bool ReachingMaxLength => CurrentLength >= MaxLength;
     }
 }

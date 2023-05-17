@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using RopePhysics;
 using UnityEngine;
+using Utility;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -45,8 +47,8 @@ public class PlayerMovement : MonoBehaviour
     private int faceDir;
 
     private Vector2 _counterForce = Vector2.zero;
-    public float counterForceFactor = 0.1f;
-    
+    public float counterForceFactor = 1f;
+
     private Vector2 _totalForce = Vector2.zero;
 
 
@@ -101,24 +103,26 @@ public class PlayerMovement : MonoBehaviour
         {
             doubleJump = true;
         }
-
-
     }
-
+    
     private void FixedUpdate()
     {
         // Move the character
         if (!isDashing)
             rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
-        ApplyCounterForce();
+        
+        CheckConstraints();
     }
 
-    private void ApplyCounterForce(){
-        if (!coll.onGround && _counterForce.y > 0){
-            // var force = new Vector2(0, _counterForce.y);
-            rb.AddForce(_counterForce);
-        }
-        _counterForce = Vector2.zero;
+    private void CheckConstraints(){
+        if (powVol.GetCarried() is not {} carried) return;
+        // temp TODO: structrualize this
+        if (carried is not Plug2 plug) return;
+        if (!plug.Wire.ReachingMaxLength) return;
+        if (plug.OtherEnd.state is Plug2.State.Free) return;
+        var oldVel = rb.velocity;
+        if (Vector2.Dot(oldVel, plug.DistanceDirection) > 0) return;
+        rb.velocity -= oldVel.Projected(plug.DistanceDirection);
     }
 
     private void Dash()
@@ -130,11 +134,31 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Jump(Vector2 dir)
-    {
-
+    public float jumpMass = 10;
+    public float jumpInertiaTime = 0.1f;
+    
+    private Coroutine _coroutine;
+    private float _prevMass;
+    private void Jump(Vector2 dir){
+        _prevMass = rb.mass;
+        rb.mass = 10;
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
+        if(_coroutine != null) StopCoroutine(_coroutine);
+        _coroutine = StartCoroutine(DeclineMass());
+    }
+
+    private IEnumerator DeclineMass(){
+        float time = 0;
+        while (time < jumpInertiaTime){
+            yield return new WaitForFixedUpdate();
+            time += Time.fixedDeltaTime;
+            time = Mathf.Clamp(time, 0, 1);
+            rb.mass = Mathf.Lerp(jumpMass, _prevMass, time / jumpInertiaTime);
+        }
+
+        rb.mass = _prevMass;
+        _coroutine = null;
     }
 
 

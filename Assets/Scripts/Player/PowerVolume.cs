@@ -28,6 +28,8 @@ public class PowerVolume : MonoBehaviour
     private ICarriable _carriable;
 
     public PlayerMovement movement;
+
+    public FixedJoint2D joint;
     
     private void Awake()
     {
@@ -55,9 +57,9 @@ public class PowerVolume : MonoBehaviour
         
     }
 
-    private void FixedUpdate(){
-        _carriable?.UpdatePosition(transform);
-    }
+    // private void FixedUpdate(){
+    //     _carriable?.UpdatePosition(transform);
+    // }
 
     public void PowerChange(int value)
     {
@@ -76,9 +78,24 @@ public class PowerVolume : MonoBehaviour
 
     private void CollisionHandler()
     {
+
         if (_carriable != null){
+            
+            hint_text.gameObject.SetActive(true);
+            if (targetCollider == null){
+                hint_text.text = "Press E to Drop";
+                return;
+            }
+            var interactable = targetCollider.GetComponent<IInteractable>();
+            interactionAva = interactable != null;
+            if (interactable?.GetInstruction(this) is { } str ){
+                hint_text.text = str;
+                return;
+            }
+            hint_text.text = "Press E to Drop";
             return;
         }
+        
         if (targetCollider == null)
         {
             hint_text.gameObject.SetActive(false);
@@ -125,15 +142,34 @@ public class PowerVolume : MonoBehaviour
             if (interactable is not{ }) return;
             interactionAva = true;
             hint_text.gameObject.SetActive(true);
-            hint_text.text = interactable.GetInstruction();
+            hint_text.text = interactable.GetInstruction(this);
         }
     }
 
     private void CollisionInteraction()
     {
-        if (!interactionAva || targetCollider == null) return;
+        if (!interactionAva) return;
+        if (_carriable != null && Input.GetButtonUp("Interact")){
+            if (targetCollider == null){
+                DropDownCurrentCarriable();
+                return;
+            }
+            var interactable = targetCollider.GetComponent<IInteractable>();
+            if (interactable is{ } inter){
+                inter.Interact(this);
+                return;
+            }
+            DropDownCurrentCarriable();
+            return;
+        }
 
-        if (Input.GetButtonUp("Interact")){
+        // if (targetCollider == null && _carriable != null){
+        //     if(Input.GetButtonUp("Interact"))
+        //         DropDownCurrentCarriable();
+        //     return;
+        // }
+
+        if (Input.GetButtonUp("Interact") && targetCollider != null){
             if (targetCollider.tag == "Mech"){
                 int required = targetCollider.transform.GetComponent<Mech>().GetRequired();
                 if (required <= PowerCurrent && !targetCollider.transform.GetComponent<Mech>().getActivate()){
@@ -189,14 +225,6 @@ public class PowerVolume : MonoBehaviour
                 }
             } else {
                 var interactable = targetCollider.GetComponent<IInteractable>();
-                if (interactable == null){
-                    if (_carriable != null){ //带着东西呢
-                        DropDownCurrentCarriable();
-                    }
-
-                    return;
-                }
-
                 interactable.Interact(this);
             }
         }
@@ -205,11 +233,15 @@ public class PowerVolume : MonoBehaviour
     public void PickUp(ICarriable carriable){
         _carriable = carriable;
         carriable.OnPickUp(this);
+        var body = carriable.Body;
+        joint.enabled = true;
+        joint.connectedBody = body;
     }
 
     public void DropDownCurrentCarriable(){
         _carriable.OnDropDown();
         _carriable = null;
+        joint.enabled = false;
     }
 
     private void winCheck()
@@ -224,4 +256,6 @@ public class PowerVolume : MonoBehaviour
     {
         return PowerCurrent;
     }
+
+    public ICarriable GetCarried() => _carriable;
 }
