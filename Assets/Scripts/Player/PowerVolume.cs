@@ -35,6 +35,7 @@ public class PowerVolume : MonoBehaviour
     {
         interactionAva = false;
         movement = GetComponent<PlayerMovement>();
+        joint = GetComponent<FixedJoint2D>();
         Power_text = transform.Find("Canvas").transform.Find("PowerText").GetComponent<Text>();
         hint_text = transform.Find("Canvas").transform.Find("ChargeHint").GetComponent<Text>();
     }

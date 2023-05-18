@@ -138,9 +138,6 @@ public class PlayerMovement : MonoBehaviour
                 Attemp2Dash();
         }
     }
-
-    public float jumpInertiaTime = 0.1f;
-    public float carriedJumpAddition = 10;
     
     private Coroutine _coroutine;
     private float _prevMass;
