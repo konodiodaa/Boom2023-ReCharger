@@ -135,7 +135,8 @@ namespace RopePhysics{
         public Vector2 Acceleration => Force * (1/Mass);
         public Vector2 Force{ get; set; } = Vector2.zero;
         public void UpdateState(float deltaTIme){
-            if(state is State.Free or State.Carried) body.AddForce(Force);
+            if(state is State.Free) body.AddForce(Force);
+            else if(state is State.Carried && !_powerVolume.movement.IsOnRise) body.AddForce(Force);
         }
         
         public IRopeSegment PrevSeg{ set; get; } = null;

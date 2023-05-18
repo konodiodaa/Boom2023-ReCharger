@@ -110,12 +110,17 @@ public class PlayerMovement : MonoBehaviour
         // Move the character
         if (!isDashing)
             rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
+
+        if (_onRise){
+                   if (rb.velocity.y < 0) _onRise = false;
+        }
         
         CheckConstraints();
     }
 
     private void CheckConstraints(){
         if (powVol.GetCarried() is not {} carried) return;
+        if (_onRise) return;
         // temp TODO: structrualize this
         if (carried is not Plug2 plug) return;
         if (!plug.Wire.ReachingMaxLength) return;
@@ -134,34 +139,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public float jumpMass = 10;
     public float jumpInertiaTime = 0.1f;
+    public float carriedJumpAddition = 10;
     
     private Coroutine _coroutine;
     private float _prevMass;
+    private bool _onRise = false;
     private void Jump(Vector2 dir){
-        _prevMass = rb.mass;
-        rb.mass = 10;
         rb.velocity = new Vector2(rb.velocity.x, 0);
         rb.velocity += dir * jumpForce;
-        if(_coroutine != null) StopCoroutine(_coroutine);
-        _coroutine = StartCoroutine(DeclineMass());
+        _onRise = true;
     }
-
-    private IEnumerator DeclineMass(){
-        float time = 0;
-        while (time < jumpInertiaTime){
-            yield return new WaitForFixedUpdate();
-            time += Time.fixedDeltaTime;
-            time = Mathf.Clamp(time, 0, 1);
-            rb.mass = Mathf.Lerp(jumpMass, _prevMass, time / jumpInertiaTime);
-        }
-
-        rb.mass = _prevMass;
-        _coroutine = null;
-    }
-
-
+    
     private void Attemp2Dash()
     {
         powVol.PowerChange(-1);
@@ -200,4 +189,6 @@ public class PlayerMovement : MonoBehaviour
     public void AddCounterForce(Vector2 force){
         _counterForce += force * counterForceFactor;
     }
+
+    public bool IsOnRise => _onRise;
 }
