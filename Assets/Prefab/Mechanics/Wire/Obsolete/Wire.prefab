@@ -41,7 +41,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7217175386723684395, guid: 99849d9edc89c4441b1b779fa67b8ef6, type: 3}
       propertyPath: m_Name
-      value: Wire2
+      value: Wire
       objectReference: {fileID: 0}
     - target: {fileID: 7217175386723684396, guid: 99849d9edc89c4441b1b779fa67b8ef6, type: 3}
       propertyPath: m_RootOrder

@@ -1,5 +1,5 @@
 ﻿namespace Enemies{
     public interface IEnemy{
-        void OnAttack(PowerVolume volume);
+        void BeingAttacked(PowerVolume volume);
     }
 }

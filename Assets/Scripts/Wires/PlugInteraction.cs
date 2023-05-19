@@ -1,8 +1,7 @@
-﻿using System;
-using Player;
+﻿using Player;
 using UnityEngine;
 
-namespace RopePhysics{
+namespace Wires{
     public class PlugInteraction: MonoBehaviour, IInteractable{
         public Plug2 plug;
 

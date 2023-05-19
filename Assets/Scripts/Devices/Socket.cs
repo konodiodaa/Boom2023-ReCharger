@@ -1,6 +1,6 @@
 ﻿using Player;
-using RopePhysics;
 using UnityEngine;
+using Wires;
 
 namespace Devices{
     public class Socket: MonoBehaviour, IInteractable{

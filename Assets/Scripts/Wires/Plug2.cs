@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using Chargers;
 using Devices;
-using Player;
 using UnityEngine;
-using Wires;
 
-namespace RopePhysics{
+namespace Wires{
     public class Plug2: MonoBehaviour, IDevice, ICarriable, IRopeSegment{
 
         public enum State{

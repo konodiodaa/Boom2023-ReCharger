@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using Devices;
+using Unity.VisualScripting.Dependencies.Sqlite;
 using UnityEngine;
-using Wires;
 
-namespace RopePhysics{
+namespace Wires{
     public class Wire2 : MonoBehaviour{
 
         public GameObject plugPref;
@@ -15,12 +16,24 @@ namespace RopePhysics{
         public Transform endPosition;
 
         public float maxLengthFactor = 3f;
+        
+        public Socket[] connectedSockets;
+
 
 
         private IEnumerator  Start(){
             CreatePlugs();
             yield return new WaitForFixedUpdate();
             CreateRope();
+            if (connectedSockets.Length > 0){
+                yield return new WaitForFixedUpdate();
+                connectedSockets[0].PlugIn(_plugs[0]);
+            }
+
+            if (connectedSockets.Length > 1){
+                yield return new WaitForFixedUpdate();
+                connectedSockets[1].PlugIn(_plugs[1]);  
+            }
         }
 
         public Vector2 GetStartPosition(){
@@ -67,5 +80,12 @@ namespace RopePhysics{
         public float MaxLength => _integration2.GetMaxLength();
 
         public bool ReachingMaxLength => CurrentLength >= MaxLength;
+
+        public bool HasElectricity => _plugs[0].HasElectric;
+
+        public void Break(){
+            IDevice.Disconnect(_plugs[0], _plugs[1]);
+            Destroy(gameObject);
+        }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using RopePhysics;
 using UnityEngine;
 
 namespace Wires{
@@ -144,8 +143,9 @@ namespace Wires{
         }
         
         private Vector2[] _curPosArray, _curVelArray, _curForceArray;
-        private void ApplyConstraints(List<IRopeSegment> segments){
+        private void ApplyConstraints(IReadOnlyList<IRopeSegment> segments){
             
+            // TODO: avoid new arrays on the fly
             Vector2[] curPosArray = new Vector2[segments.Count], 
                 curVelArray = new Vector2[segments.Count], 
                 curForceArray = new Vector2[segments.Count];
@@ -187,7 +187,7 @@ namespace Wires{
             }
             segments[0].AvoidCollision();
         }
-        
+
         // Force on a;
         private Vector2 ComputeForce(IRopeSegment b, IRopeSegment a){
             var posDiff = a.Position - b.Position;
@@ -218,6 +218,21 @@ namespace Wires{
             for (var i = 1; i < _segments.Count; i++){
                 CurrentLength += (_segments[i].Position - _segments[i - 1].Position).magnitude;
             }
+        }
+
+        public List<Vector2> GetPositions() => _segments.Select(s => s.Position).ToList();
+        public int GetSegmentsCount() => _segments.Count;
+
+        public int GetPositions(List<Vector2> res){
+            for (int i = 0; i < _segments.Count; i++){
+                if (res.Count <= i){
+                    res.Add(_segments[i].Position);
+                } else{
+                    res[i] = _segments[i].Position;
+                }
+            }
+
+            return _segments.Count;
         }
     }
 }

@@ -53,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4860145195647618565, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: m_Name
-      value: Wire2
+      value: Wire
       objectReference: {fileID: 0}
     - target: {fileID: 4860145195665719957, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: m_LocalPosition.x
