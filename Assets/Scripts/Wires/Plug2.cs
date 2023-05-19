@@ -5,6 +5,7 @@ using Chargers;
 using Devices;
 using Player;
 using UnityEngine;
+using Wires;
 
 namespace RopePhysics{
     public class Plug2: MonoBehaviour, IDevice, ICarriable, IRopeSegment{

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Wires;
 
 namespace RopePhysics{
     public class Wire2 : MonoBehaviour{

@@ -160,12 +160,6 @@ public class PowerVolume : MonoBehaviour
             return;
         }
 
-        // if (targetCollider == null && _carriable != null){
-        //     if(Input.GetButtonUp("Interact"))
-        //         DropDownCurrentCarriable();
-        //     return;
-        // }
-
         if (Input.GetButtonUp("Interact") && targetCollider != null){
             if (targetCollider.tag == "Mech"){
                 int required = targetCollider.transform.GetComponent<Mech>().GetRequired();

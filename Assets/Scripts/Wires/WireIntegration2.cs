@@ -1,74 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using RopePhysics;
 using UnityEngine;
 
-namespace RopePhysics{
-
-    public interface IRopeSegment{
-        float Mass{ get; }
-        Vector2 Velocity{ get; set; }
-        Vector2 Position{ get; set; }
-        Vector2 Acceleration{ get; }
-        Vector2 Force{ set; get; }
-        void UpdateState(float deltaTIme);
-        
-        IRopeSegment PrevSeg{ set; get; }
-        IRopeSegment NextSeg{ set; get; }
-        void AvoidCollision();
-    }
-    
-    public class WireIntegration2 : MonoBehaviour{
-        public class RopeSegment: IRopeSegment{
-            public RopeSegment(Vector3 initPos){
-                Position = initPos;
-            }
-
-            public float Mass => integrator.segmentMass;
-            public Vector2 Velocity{ get; set; } = Vector2.zero;
-            public Vector2 Position{ get; set; }
-            public Vector2 Acceleration => Force * (1 / Mass);
-            public IRopeSegment PrevSeg{ set; get; } = null;
-            public IRopeSegment NextSeg{ set; get; } = null;
-
-            public Vector2 Force{ set; get; } = Vector2.zero;
-
-            public WireIntegration2 integrator;
-            
-
-            public void AvoidCollision(){
-                var col = Physics2D.OverlapCircle(Position, integrator.segColRadius, LayerMask.GetMask("Ground"));
-                if (col == null){
-                    return;
-                }
-                var closestPoint = col.ClosestPoint(Position);
-                var norm = (Position - closestPoint).normalized;
-                Position = closestPoint + norm * integrator.segColRadius;
-                Velocity -= Vector2.Dot(norm, Velocity) * norm;
-                Force -= Vector2.Dot(norm, Force) * norm;
-            }
-
-            public void UpdateState(float deltaTIme){
-                Velocity += Force * (deltaTIme / Mass);
-                Position += deltaTIme * Velocity;
-            }
-        }
-
-        public class FixedSegment : IRopeSegment{
-
-            public float Mass{ get; set; } = 1;
-            public Vector2 Velocity{ get; set; } = Vector2.zero;
-            public Vector2 Position{ get; set; } = Vector2.zero;
-            public Vector2 Acceleration => Force * (1 / Mass);
-            public IRopeSegment PrevSeg{ set; get; } = null;
-            public IRopeSegment NextSeg{ set; get; } = null;
-
-            public Vector2 Force{ set; get; } = Vector2.zero;
-            public void UpdateState(float deltaTIme){ }
-            public void AvoidCollision(){ }
-        }
-
+namespace Wires{
+    public partial class WireIntegration2 : MonoBehaviour{
         private LineRenderer _lineRenderer;
         private List<IRopeSegment> _segments = new List<IRopeSegment>();
         [SerializeField] private Transform _startPoint;
