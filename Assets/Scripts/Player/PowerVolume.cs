@@ -235,17 +235,6 @@ public class PowerVolume : MonoBehaviour
         joint.connectedBody = body;
     }
 
-    private IEnumerator SlowlyMoveCarriable(Rigidbody2D body){
-        int i = 0;
-        while (i < 10){
-            yield return new WaitForSeconds(0.1f);
-            body.MovePosition(body.position + new Vector2(0.0f, 0.01f));
-            i++;
-        }
-        joint.enabled = true;
-        joint.connectedBody = body;
-    }
-
     public void DropDownCurrentCarriable(){
         _carriable.OnDropDown();
         _carriable = null;

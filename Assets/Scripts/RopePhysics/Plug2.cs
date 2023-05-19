@@ -85,6 +85,7 @@ namespace RopePhysics{
             body.isKinematic = true;
             _pluggedSock = socket;
             _prevLayer = gameObject.layer;
+            interaction.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("NoCollision");
         }
 
@@ -92,6 +93,7 @@ namespace RopePhysics{
             state = State.Free;
             body.isKinematic = false;
             _pluggedSock = null;
+            interaction.enabled = true;
             gameObject.layer = _prevLayer; // LayerMask.NameToLayer("InteractionLayer");
         }
 
