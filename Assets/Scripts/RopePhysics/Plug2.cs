@@ -7,7 +7,7 @@ using Player;
 using UnityEngine;
 
 namespace RopePhysics{
-    public class Plug2: MonoBehaviour, IDevice, IInteractable, ICarriable, IRopeSegment{
+    public class Plug2: MonoBehaviour, IDevice, ICarriable, IRopeSegment{
 
         public enum State{
             Free,
@@ -50,65 +50,49 @@ namespace RopePhysics{
             OtherEnd = other;
         }
 
-        public string GetInstruction(PowerVolume volume){
-            return state switch{
-                State.Free => volume.GetCarried() == null ? "Press E to Pick Up" : null,
-                State.Carried => null,
-                State.Plugged => null
-            };
-        }
-
-        public void Interact(PowerVolume volume){
-            switch (state){
-                case State.Free:
-                    if (volume.GetCarried() != null) return;
-                    Debug.Log("Player pick up Plug!");
-                    volume.PickUp(this);
-                    break;
-                case State.Carried:
-                    break;
-                case State.Plugged:
-                    break;
-            }
-        }
-
         public bool IsCarried => state == State.Carried;
 
         private float _prevMass;
 
+        private int _prevLayer;
+
+        public PlugInteraction interaction;
+
         public void OnPickUp(PowerVolume powerVolume){
             state = State.Carried;
-            // body.isKinematic = true;
             _powerVolume = powerVolume;
             _prevMass = body.mass;
             body.mass = 0.01f;
             body.SetRotation(0);
             body.freezeRotation = true;
-            gameObject.layer = LayerMask.NameToLayer("Carried"); //LayerMask.GetMask("Carried");
+            _prevLayer = gameObject.layer;
+            interaction.enabled = false;
+            gameObject.layer = LayerMask.NameToLayer("NoCollision"); //LayerMask.GetMask("Carried");
             
         }
 
         public void OnDropDown(){
             state = State.Free;
-            // body.isKinematic = false;
             body.mass = _prevMass;
             _powerVolume = null;
             body.freezeRotation = false;
-            gameObject.layer =  LayerMask.NameToLayer("InteractionLayer");//LayerMask.GetMask("InteractionLayer");
+            interaction.enabled = true;
+            gameObject.layer = _prevLayer; //LayerMask.NameToLayer("");//LayerMask.GetMask("InteractionLayer");
         }
 
         public void OnPlugIn(Socket socket){
             state = State.Plugged;
             body.isKinematic = true;
             _pluggedSock = socket;
-            gameObject.layer = LayerMask.NameToLayer("Plugged");
+            _prevLayer = gameObject.layer;
+            gameObject.layer = LayerMask.NameToLayer("NoCollision");
         }
 
         public void OnPullOut(Socket socket){
             state = State.Free;
             body.isKinematic = false;
             _pluggedSock = null;
-            gameObject.layer = LayerMask.NameToLayer("InteractionLayer");
+            gameObject.layer = _prevLayer; // LayerMask.NameToLayer("InteractionLayer");
         }
 
         public float Mass => state == State.Carried ? _powerVolume.movement.rb.mass : body.mass;
@@ -153,5 +137,6 @@ namespace RopePhysics{
         public Vector2 DistanceDirection => (PrevSeg == null ? (Position - NextSeg.Position) : (PrevSeg.Position - Position) ).normalized;
 
         public Rigidbody2D Body => body;
+
     }
 }

@@ -43,8 +43,8 @@ TagManager:
   - 
   - 
   - 
-  - Plugged
-  - Carried
+  - OnlyCollideWithGround
+  - NoCollision
   m_SortingLayers:
   - name: Default
     uniqueID: 0

@@ -58,10 +58,6 @@ public class PowerVolume : MonoBehaviour
         
     }
 
-    // private void FixedUpdate(){
-    //     _carriable?.UpdatePosition(transform);
-    // }
-
     public void PowerChange(int value)
     {
         PowerCurrent += value;
@@ -235,6 +231,17 @@ public class PowerVolume : MonoBehaviour
         _carriable = carriable;
         carriable.OnPickUp(this);
         var body = carriable.Body;
+        joint.enabled = true;
+        joint.connectedBody = body;
+    }
+
+    private IEnumerator SlowlyMoveCarriable(Rigidbody2D body){
+        int i = 0;
+        while (i < 10){
+            yield return new WaitForSeconds(0.1f);
+            body.MovePosition(body.position + new Vector2(0.0f, 0.01f));
+            i++;
+        }
         joint.enabled = true;
         joint.connectedBody = body;
     }
