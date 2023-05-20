@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Switches;
 using UnityEngine;
 
-public class MovePlatform : MonoBehaviour
+public class MovePlatform : MonoBehaviour, ISwitchControled
 {
     private Mech mech;
 
@@ -20,9 +21,11 @@ public class MovePlatform : MonoBehaviour
         mech = transform.Find("MoveMech").GetComponent<Mech>();
     }
 
+    private bool _isActive = false;
+
     private void Update()
     {
-        if (mech.getActivate())
+        if ( _isActive )//mech.getActivate())
         {
             float x = Time.deltaTime * speed;
             cur_dist += x;
@@ -41,7 +44,7 @@ public class MovePlatform : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (mech.getActivate())
+        if (_isActive )//mech.getActivate())
         {
             float x = Time.deltaTime * speed;
             if (!reverse)
@@ -54,7 +57,7 @@ public class MovePlatform : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if(mech.getActivate())
+        if( _isActive) //mech.getActivate())
         {
             float x = Time.deltaTime * speed;
             if (!reverse)
@@ -67,7 +70,7 @@ public class MovePlatform : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (mech.getActivate())
+        if ( _isActive )//mech.getActivate())
         {
             float x = Time.deltaTime * speed;
             if (!reverse)
@@ -76,5 +79,13 @@ public class MovePlatform : MonoBehaviour
                 collision.transform.Translate(-x, 0f, 0f);
         }
 
+    }
+
+    public void OnTurnedOn(){
+        _isActive = true;
+    }
+
+    public void OnTurnedOff(){
+        _isActive = false;
     }
 }

@@ -24,10 +24,10 @@ namespace Player{
             if (_timer != 0) return;
             volume.PowerCurrent -= 1;
             StartCoroutine(ChargeAnim());
-            var num = Physics2D.OverlapCircle(transform.position, chargeRange, new(), _targetColliders);
+            var num = Physics2D.OverlapCircle(transform.position, chargeRange, new(){useTriggers = true}, _targetColliders);
             if (num == 0) return;
             foreach (var col in _targetColliders){
-                if (col.GetComponent<IChargeable>() is not { } chargeable) return;
+                if (col.GetComponent<IChargeable>() is not { } chargeable) continue;
                 chargeable.GetCharge();
             }
         }
