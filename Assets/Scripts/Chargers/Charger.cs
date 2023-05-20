@@ -1,7 +1,11 @@
+using Devices;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
+using Devices;
+
 
 public class Charger : MonoBehaviour
 {
@@ -11,17 +15,19 @@ public class Charger : MonoBehaviour
     private int FullPower  = 3;
 
     private Text Power_text;
-    private PlugHead ph;
+    public TestDevice device;
+
     private void Awake()
     {
         Power_text = transform.Find("Canvas").transform.GetComponentInChildren<Text>();
-        ph = transform.Find("plug").GetComponent<PlugHead>();
+        
+
     }
 
     private void Update()
     {
         Power_text.text = CurrentPower.ToString();
-        if(ph.getConnectStatus())
+        if(device.HasElectric)
         {
             CurrentPower = FullPower;
         }
@@ -44,3 +50,4 @@ public class Charger : MonoBehaviour
         CurrentPower = FullPower;
     }
 }
+    
