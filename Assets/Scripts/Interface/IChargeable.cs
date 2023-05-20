@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IChargeable 
 {
-    void ChargeDevice();
+    void GetCharge();
 }
