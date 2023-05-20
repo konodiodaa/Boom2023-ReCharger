@@ -12,7 +12,19 @@ public class PowerVolume : MonoBehaviour
     [SerializeField]
     [Header("Power")]
     private int PowerRequired;
-    public int PowerCurrent;
+    
+    public int initPower;
+
+    private int _power;
+    public int PowerCurrent{
+        set{
+            _power = value;
+            if (value >= PowerRequired){
+                EventCenter.Broadcast(EventDefine.Win);
+            }
+        }
+        get => _power;
+    }
 
     private Text Power_text;
     private Text hint_text;
@@ -31,8 +43,8 @@ public class PowerVolume : MonoBehaviour
 
     public FixedJoint2D joint;
     
-    private void Awake()
-    {
+    private void Awake(){
+        PowerCurrent = initPower;
         interactionAva = false;
         movement = GetComponent<PlayerMovement>();
         joint = GetComponent<FixedJoint2D>();
@@ -43,7 +55,7 @@ public class PowerVolume : MonoBehaviour
     private void Update()
     {
         Power_text.text = PowerCurrent.ToString();
-        winCheck();
+        // winCheck();
         
         // Move To Fixed Update?
         CollisionCheck(); // get interactable object
@@ -63,14 +75,31 @@ public class PowerVolume : MonoBehaviour
         PowerCurrent += value;
     }
 
+    private readonly List<Collider2D> _collider2Ds = new();    
+    
     private void CollisionCheck()
     {
-        Collider2D collider = Physics2D.OverlapCircle(transform.position, 1.0f,LayerMask.GetMask("InteractionLayer"));
-        if (collider != null)
-            targetCollider = collider;
-        else
+        // Collider2D collider = Physics2D.OverlapCircle(transform.position, 1.0f,LayerMask.GetMask("InteractionLayer"));
+        // if (collider != null)
+        //     targetCollider = collider;
+        // else
+        //     targetCollider = null;
+        
+        int num = Physics2D.OverlapCircle(transform.position, 1f, new ContactFilter2D(){
+            useLayerMask = true,
+            layerMask = LayerMask.GetMask("InteractionLayer")
+        }, _collider2Ds);
+        if (num == 0){
             targetCollider = null;
-
+            return;
+        }
+        _collider2Ds.Sort((c1, c2) => {
+            var p1 = c1.transform.position;
+            var p2 = c2.transform.position;
+            var p0 = transform.position;
+            return Math.Sign((p0 - p1).sqrMagnitude - (p0 - p2).sqrMagnitude);
+        });
+        targetCollider = _collider2Ds[0];
     }
 
     private void CollisionHandler()
@@ -216,7 +245,7 @@ public class PowerVolume : MonoBehaviour
                 }
             } else {
                 var interactable = targetCollider.GetComponent<IInteractable>();
-                interactable.Interact(this);
+                interactable?.Interact(this);
             }
         }
     }
@@ -235,18 +264,13 @@ public class PowerVolume : MonoBehaviour
         joint.enabled = false;
     }
 
-    private void winCheck()
-    {
-        if (PowerCurrent >= PowerRequired)
-        {
-            EventCenter.Broadcast(EventDefine.Win);
-        }
-    }
-
-    public int GetPower()
+    public int GetCurrentPower()
     {
         return PowerCurrent;
     }
 
     public ICarriable GetCarried() => _carriable;
+
+    public bool IsCarrying() => _carriable != null;
+    
 }

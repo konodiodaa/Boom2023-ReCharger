@@ -2,34 +2,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 using Wires;
 
 
 namespace Enemies{
-    public class Spiky: MonoBehaviour, IEnemy, IBreakWire{
+    public class Spiky: MonoBehaviour, IEnemy, IBreakWire, IChargeable{
+
+        public SpriteRenderer renderer;
+
+        public bool isDead = false;
+        
         private void FixedUpdate(){
+            if (isDead) return;
             var prev = transform.position;
             transform.position = prev + Vector3.left * 0.02f;
         }
 
-        public void BeingAttacked(PowerVolume volume){
-            
-        }
-
         public void Die(){
-            Destroy(gameObject);
+            if (isDead) return;
+            isDead = true;
+            var c = renderer.color;
+            renderer.color = c;
+            var tween = AnimUtility.Tween(0.2f, i => {
+                c.a = Mathf.Lerp(1, 0, i);
+                renderer.color = c;
+            }, null, () => {
+                c.a = 0;
+                renderer.color = c;
+                Destroy(this);
+            });
+            StartCoroutine(tween());
         }
 
         public void OnBreakConnectedWire(){
             Die();
         }
 
-        private void OnCollisionEnter2D(Collision2D other){
-            Debug.Log("Collide!");
+        public void GetCharge(){
+            Die();
         }
 
-        private void OnTriggerEnter2D(Collider2D other){
-            Debug.Log("Trigger!");
+        private void OnCollisionEnter2D(Collision2D other){
+            if (string.Compare(other.gameObject.tag, "Player", StringComparison.Ordinal) != 0) return;
+            // Player fail!
         }
     }
 }

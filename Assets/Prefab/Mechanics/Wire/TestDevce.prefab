@@ -48,6 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   socket: {fileID: 6979217280677936591}
   renderer: {fileID: 6979217280092485246}
+  connected: {fileID: 0}
 --- !u!212 &6979217280092485246
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -125,7 +126,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7938601405873500793, guid: 21d90c8cec89b0a4f8babdfaab8f2742, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7938601405873500793, guid: 21d90c8cec89b0a4f8babdfaab8f2742, type: 3}
       propertyPath: m_LocalRotation.w

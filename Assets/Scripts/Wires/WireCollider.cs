@@ -22,10 +22,13 @@ namespace Wires{
             var res = Physics2D.OverlapCollider(edge,
                 new ContactFilter2D(){ useLayerMask = true, layerMask = LayerMask.GetMask("Enemy") }, _wireBreakers);
             if (res > 0){
-                var breaker = _wireBreakers[0].GetComponent<IBreakWire>();
-                if (breaker == null) return;
-                breaker.OnBreakConnectedWire();
-                wire.Break();
+                for (int i = 0; i < res; i++){
+                    var breaker = _wireBreakers[i].GetComponent<IBreakWire>();
+                    if (breaker == null) continue;
+                    if(wire.HasElectricity) breaker.OnBreakConnectedWire();
+                    wire.Break();
+                    break;
+                }
             }
         }
 

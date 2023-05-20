@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Player;
 using UnityEngine;
 using Utility;
 using Wires;
@@ -8,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private Collision coll;
     private PowerVolume powVol; // power volume of player
-    private AttackAbility aab;
+    private PlayerCharge aab;
 
     [HideInInspector]
     public Rigidbody2D rb;
@@ -57,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         doubleJump = true;
         coll = GetComponent<Collision>();
         powVol = GetComponent<PowerVolume>();
-        aab = GetComponent<AttackAbility>();
+        aab = GetComponent<PlayerCharge>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -69,7 +70,7 @@ public class PlayerMovement : MonoBehaviour
             Dash();
         }
         if(isDashing)
-            checkDash();
+            CheckDash();
     }
 
     private void Movement()
@@ -86,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 Jump(Vector2.up);
             }
-            else if(doubleJump && powVol.GetPower() > 1)
+            else if(doubleJump && powVol.GetCurrentPower() > 0)
             {
                 powVol.PowerChange(-1);
                 doubleJump = false;
@@ -96,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetButtonDown("Attack"))
         {
-            aab.Attack();
+            aab.Charge();
         }
 
         if (coll.onGround)
@@ -115,10 +116,10 @@ public class PlayerMovement : MonoBehaviour
                    if (rb.velocity.y < 0) _onRise = false;
         }
         
-        CheckConstraints();
+        CheckCarriableConstraints();
     }
 
-    private void CheckConstraints(){
+    private void CheckCarriableConstraints(){
         if (powVol.GetCarried() is not {} carried) return;
         if (_onRise) return;
         // temp TODO: structrualize this
@@ -132,10 +133,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Dash()
     {
-        if (Input.GetButtonDown("Dash"))
+        if (Input.GetButtonDown("Dash") && powVol.GetCarried() != null) 
         {
-            if (Time.time >= (lastDash + dashCooldown) && powVol.GetPower() > 1)
-                Attemp2Dash();
+            if (Time.time >= (lastDash + dashCooldown) && powVol.GetCurrentPower() > 1)
+                Attempt2Dash();
         }
     }
     
@@ -148,7 +149,7 @@ public class PlayerMovement : MonoBehaviour
         _onRise = true;
     }
     
-    private void Attemp2Dash()
+    private void Attempt2Dash()
     {
         powVol.PowerChange(-1);
         isDashing = true;
@@ -158,7 +159,7 @@ public class PlayerMovement : MonoBehaviour
         PlayerAfterImagePool.Instance.GetFromPool();
     }
 
-    private void checkDash()
+    private void CheckDash()
     {
         if (isDashing)
         {
@@ -181,10 +182,6 @@ public class PlayerMovement : MonoBehaviour
                 isDashing = false;
             }
         }
-    }
-
-    public void AddCounterForce(Vector2 force){
-        _counterForce += force * counterForceFactor;
     }
 
     public bool IsOnRise => _onRise;
