@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
-  speed: 7
+  speed: 5
   jumpForce: 12
   dashDistance: 5
   dashSpeed: 30
@@ -385,7 +385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PowerRequired: 3
   initPower: 0
-  targetCollider: {fileID: 0}
+  powerUpLimit: 3
   movement: {fileID: 0}
   joint: {fileID: 0}
 --- !u!114 &3385662274063055501

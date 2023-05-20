@@ -27,6 +27,10 @@ namespace Wires{
             }
         }
 
+        bool IInteractable.IsActive(PowerVolume volume){
+            return true;
+        }
+
         private void OnDisable(){
             GetComponent<Collider2D>().enabled = false;
         }
