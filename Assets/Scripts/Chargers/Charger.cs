@@ -30,6 +30,8 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
     public Transform barCtn;
     public Socket socket;
 
+    public SpriteRenderer onSupplySign;
+
     private void Awake(){
         Power_text = transform.Find("Canvas").transform.GetComponentInChildren<Text>();
         CurPower = initPower;
@@ -47,7 +49,7 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
         get => _hasPower;
         set{
             _hasPower = value;
-            
+            onSupplySign.color = value ? Color.green : Color.clear;
         } 
     }
     
@@ -68,6 +70,6 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
         }
     }
 
-    public bool IsActive(PowerVolume volume) => HasElectric || CurPower > 0;
+    public bool IsActive(PowerVolume volume) => !volume.IsCarrying() && ( HasElectric || CurPower > 0);
 }
     

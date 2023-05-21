@@ -15,8 +15,6 @@ namespace Wires{
 
         public Transform endPosition;
 
-        public float maxLengthFactor = 3f;
-        
         public Socket[] connectedSockets;
 
 
@@ -55,10 +53,6 @@ namespace Wires{
 
             inst = Instantiate(plugPref, transform, false);
             inst.transform.position = endPosition.position; 
-            if ((endPosition.position - transform.position).magnitude > _integration2.GetMaxLength() * maxLengthFactor){
-                inst.transform.localPosition = (endPosition.position - transform.position).normalized *
-                                               (_integration2.GetMaxLength() * maxLengthFactor);
-            }
             _plugs[1] = inst.GetComponent<Plug2>();
             
             _plugs[0].SetPair(_plugs[1]);
@@ -86,6 +80,11 @@ namespace Wires{
         public void Break(){
             IDevice.Disconnect(_plugs[0], _plugs[1]);
             Destroy(gameObject);
+        }
+
+        private void OnDrawGizmos(){
+            Gizmos.DrawSphere(transform.position, 0.2f);
+            Gizmos.DrawSphere(endPosition.position, 0.2f);
         }
     }
 }

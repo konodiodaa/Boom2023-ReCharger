@@ -25,10 +25,10 @@ namespace Devices{
         }
 
         public void Interact(PowerVolume volume){
-            if (volume.GetCarried() == null && _plug != null){
+            if (volume.GetCarried() == null && _plug != null){ // Player is carrying stuff and no plug is in this socket
                 volume.PickUp(PullOut());
             }
-            else if(volume.GetCarried() is Plug2 plug && _plug == null){
+            else if(volume.GetCarried() is Plug2 plug && _plug == null){ // Player is not 
                 volume.DropDownCurrentCarriable();
                 PlugIn(plug);
             }
