@@ -113,22 +113,8 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);
 
         if (_onRise){
-                   if (rb.velocity.y < 0) _onRise = false;
+            if (rb.velocity.y < 0) _onRise = false;
         }
-        
-        CheckCarriableConstraints();
-    }
-
-    private void CheckCarriableConstraints(){
-        if (powVol.GetCarried() is not {} carried) return;
-        if (_onRise) return;
-        // temp TODO: structrualize this
-        if (carried is not Plug2 plug) return;
-        if (!plug.Wire.ReachingMaxLength) return;
-        if (plug.OtherEnd.state is Plug2.State.Free) return;
-        var oldVel = rb.velocity;
-        if (Vector2.Dot(oldVel, plug.DistanceDirection) > 0) return;
-        rb.velocity -= oldVel.Projected(plug.DistanceDirection);
     }
 
     private void Dash()

@@ -5,12 +5,16 @@ namespace Wires{
         float Mass{ get; }
         Vector2 Velocity{ get; set; }
         Vector2 Position{ get; set; }
-        Vector2 Acceleration{ get; }
+        Vector2 NextPosition{ get; set; }
         Vector2 Force{ set; get; }
-        void UpdateState(float deltaTIme);
-        
         IRopeSegment PrevSeg{ set; get; }
         IRopeSegment NextSeg{ set; get; }
-        void AvoidCollision();
+        /// <summary>
+        /// Put testPosition into test, output the final position
+        /// </summary>
+        /// <param name="testPosition"></param>
+        /// <returns></returns>
+        Vector2 AvoidCollision(Vector2 testPosition);
+        bool IsFree();
     }
 }

@@ -10,31 +10,28 @@ namespace Wires{
             public float Mass => integrator.segmentMass;
             public Vector2 Velocity{ get; set; } = Vector2.zero;
             public Vector2 Position{ get; set; }
+            public Vector2 NextPosition{ get; set; } = Vector2.zero;
             public Vector2 Acceleration => Force * (1 / Mass);
             public IRopeSegment PrevSeg{ set; get; } = null;
             public IRopeSegment NextSeg{ set; get; } = null;
+            public Vector2 AvoidCollision(Vector2 testPosition){
+                var col = Physics2D.OverlapCircle(testPosition, integrator.segColRadius, LayerMask.GetMask("Ground"));
+                if (col == null){
+                    return testPosition;
+                }
+                var closestPoint = col.ClosestPoint(testPosition);
+                var norm = (testPosition - closestPoint).normalized; 
+                return closestPoint + norm * integrator.segColRadius;
+            }
+
+            public bool IsFree(){
+                return true;
+            }
 
             public Vector2 Force{ set; get; } = Vector2.zero;
 
             public WireIntegration2 integrator;
             
-
-            public void AvoidCollision(){
-                var col = Physics2D.OverlapCircle(Position, integrator.segColRadius, LayerMask.GetMask("Ground"));
-                if (col == null){
-                    return;
-                }
-                var closestPoint = col.ClosestPoint(Position);
-                var norm = (Position - closestPoint).normalized;
-                Position = closestPoint + norm * integrator.segColRadius;
-                Velocity -= Vector2.Dot(norm, Velocity) * norm;
-                Force -= Vector2.Dot(norm, Force) * norm;
-            }
-
-            public void UpdateState(float deltaTIme){
-                Velocity += Force * (deltaTIme / Mass);
-                Position += deltaTIme * Velocity;
-            }
         }
     }
 }

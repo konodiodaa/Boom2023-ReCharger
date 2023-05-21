@@ -151,9 +151,6 @@ MonoBehaviour:
   _segmentCount: 20
   _segmentLength: 0.03
   _solveStep: 2
-  stiffness: 2000
-  segmentMass: 2
-  kVel: 0.05
-  kDamp: 2
-  calculateVelocityFactor: 0
+  segmentMass: 0.1
   segColRadius: 0.05
+  dampingFactor: 0.005

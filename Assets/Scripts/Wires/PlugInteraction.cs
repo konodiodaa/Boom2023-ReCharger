@@ -27,11 +27,9 @@ namespace Wires{
             }
         }
 
-        bool IInteractable.IsActive(PowerVolume volume){
-            return true;
-        }
+        bool IInteractable.IsActive(PowerVolume volume) => !volume.IsCarrying();
 
-        private void OnDisable(){
+            private void OnDisable(){
             GetComponent<Collider2D>().enabled = false;
         }
 

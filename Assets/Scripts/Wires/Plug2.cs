@@ -60,7 +60,6 @@ namespace Wires{
             state = State.Carried;
             _powerVolume = powerVolume;
             _prevMass = body.mass;
-            body.mass = 0.01f;
             body.SetRotation(0);
             body.freezeRotation = true;
             _prevLayer = gameObject.layer;
@@ -95,18 +94,18 @@ namespace Wires{
             gameObject.layer = _prevLayer; // LayerMask.NameToLayer("InteractionLayer");
         }
 
-        public float Mass => state == State.Carried ? _powerVolume.movement.rb.mass : body.mass;
+        public float Mass => state == State.Carried ? (_powerVolume.movement.rb.mass + body.mass) : body.mass;
 
         public Vector2 Velocity{
             set{
-                if (state is State.Plugged)
+                if (state is State.Plugged){
+                    body.velocity = Vector2.zero;
                     return;
+                }
+                // if (IsCarried) _powerVolume.movement.rb.velocity += value - body.velocity;
                 body.velocity = value;
             }
-            get{
-                if (state is State.Carried) return _powerVolume.movement.rb.velocity;
-                return body.velocity;
-            }
+            get => IsCarried ? _powerVolume.movement.rb.velocity : body.velocity;
         }
 
         public Vector2 Position{
@@ -116,15 +115,19 @@ namespace Wires{
             }
             get => body.position;
         }
+
+        public Vector2 NextPosition{ get; set; } = Vector2.zero;
         public Vector2 Acceleration => Force * (1/Mass);
         public Vector2 Force{ get; set; } = Vector2.zero;
-        public void UpdateState(float deltaTIme){
-            if(state is State.Free) body.AddForce(Force);
-            else if(state is State.Carried && !_powerVolume.movement.IsOnRise) body.AddForce(Force);
-        }
-        
         public IRopeSegment PrevSeg{ set; get; } = null;
         public IRopeSegment NextSeg{ set; get; } = null;
+        public Vector2 AvoidCollision(Vector2 testPosition){
+            return testPosition;
+        }
+
+        public bool IsFree(){
+            return state == State.Free;
+        }
 
         public void AvoidCollision(){ }
 

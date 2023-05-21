@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Wires{
     public partial class WireIntegration2 : MonoBehaviour{
@@ -23,16 +24,9 @@ namespace Wires{
         
         [SerializeField] private int _solveStep = 5;
 
-        public float stiffness = 1000;
         public float segmentMass = 1f;
-        public float kDamp = 0.05f;
-        public float drag = 0.05f;
 
         public float segColRadius = 0.05f;
-        public float tautThreshold = 0.1f;
-
-        public float bounceLength = 0.05f;
-        public float minGravityFactor = 0.01f;
         
         [NonSerialized]
         public float CurrentLength = 0;
@@ -82,6 +76,10 @@ namespace Wires{
             }
             _segments.Add(EndSegment);
             EndSegment.PrevSeg = prev;
+
+            foreach (var s in _segments){
+                s.NextPosition = s.Position;
+            }
         }
 
         private void FixedUpdate(){
@@ -100,108 +98,71 @@ namespace Wires{
             for (int i = 0; i < _solveStep; i++){
                 ApplyConstraints(_segments);
             }
+            UpdateVelocity(_segments);
+            UpdateCurrentLength();
         }
 
         private List<IRopeSegment> _copySegs = new();
+        private readonly List<Vector2> _nextPositions = new();
 
         private void Euler(List<IRopeSegment> segments){
             foreach (var seg in segments){
-                seg.Force = Vector2.zero;
+                DampVelocity(seg);
+                seg.Velocity += Physics2D.gravity * Time.fixedDeltaTime;
+                seg.NextPosition = seg.Position + seg.Velocity * Time.fixedDeltaTime;
             }
+        }
 
-            for (var i = 0; i < segments.Count; i++){
-                var cur = segments[i];
-                if (i < segments.Count - 1){
-                    var next = segments[i + 1];
-                    cur.Force += ComputeForce(next, cur);
-                }
+        public float dampingFactor = 0.005f;
 
-                if (i > 0){
-                    var prev = segments[i - 1];
-                    cur.Force += ComputeForce(prev, cur);
-                }
-            }
-
-            foreach (var seg in segments){
-                if (StartSegment is Plug2 startPlug && EndSegment is Plug2 endPlug){
-                    if ((startPlug.state is Plug2.State.Free || endPlug.state is Plug2.State.Free)){
-                        seg.Force += ComputeGravity(seg);
-                    } else{
-                        var deviate = (GetMaxLength() - CurrentLength - tautThreshold) / GetMaxLength();
-                        deviate = Mathf.Clamp(deviate, 0, 1);
-                        var factor = Mathf.Lerp(minGravityFactor, 1, deviate);
-                        seg.Force += ComputeGravity(seg) * factor;
-                    }
-                } else{
-                    seg.Force += ComputeGravity(seg);
-                }
-                seg.UpdateState(Time.fixedDeltaTime);
-                seg.AvoidCollision();
-            }
-            
-            UpdateCurrentLength();
+        private void DampVelocity(IRopeSegment seg){
+            var f = Mathf.Clamp01(1 - seg.Velocity.sqrMagnitude / seg.Mass * dampingFactor);
+            seg.Velocity *= f;
         }
         
-        private Vector2[] _curPosArray, _curVelArray, _curForceArray;
+
         private void ApplyConstraints(IReadOnlyList<IRopeSegment> segments){
-            
-            // TODO: avoid new arrays on the fly
-            Vector2[] curPosArray = new Vector2[segments.Count], 
-                curVelArray = new Vector2[segments.Count], 
-                curForceArray = new Vector2[segments.Count];
-            
-            for(var i = 0; i<segments.Count; i++){
-                var seg = segments[i];
-                curPosArray[i] = seg.Position;
-                curVelArray[i] = seg.Velocity;
-                curForceArray[i] = seg.Force;
-            }
-            
+
             for (int i = 1; i < segments.Count; i++){
-                var cur = segments[i];
-                var prev = segments[i - 1];
-                var prevPos = curPosArray[i - 1];
-                var curPos = curPosArray[i];
-                var posDiff = curPos - prevPos;
-                var deviate = posDiff.magnitude - _segmentLength;
-                if (deviate < 0) continue;
-                // Position Constraint
-                // Move both points closer a little bit
-                var posDiffNorm = posDiff.normalized;
-                var posMod = 0.5f * deviate * posDiffNorm;
-                prev.Position += posMod;
-                cur.Position -= posMod;
-
-                // Velocity Constraint
-                var t = Vector2.Dot(curVelArray[i], posDiffNorm);
-                if (t > 0){
-                    cur.Velocity -= t * posDiffNorm;
-                }
-
-                t = Vector2.Dot(curVelArray[i - 1], posDiffNorm);
-                if (t < 0){
-                    prev.Velocity -= t * posDiffNorm;
-                }
-
-                cur.AvoidCollision();
+                ApplyDistanceConstraint(segments[i], segments[i-1]);
+                segments[i].NextPosition = segments[i].AvoidCollision(segments[i].NextPosition);
             }
-            segments[0].AvoidCollision();
+            segments[0].NextPosition = segments[0].AvoidCollision(segments[0].NextPosition);
         }
 
-        // Force on a;
-        private Vector2 ComputeForce(IRopeSegment b, IRopeSegment a){
-            var posDiff = a.Position - b.Position;
-            var posDir = posDiff.normalized;
-            var lenDiff = Mathf.Max(posDiff.magnitude - bounceLength, 0);
-            var ret = - (lenDiff * lenDiff) * stiffness * posDir;
-            var velDiff = a.Velocity - b.Velocity;
-            ret += -kDamp * Vector2.Dot(velDiff, posDiff) / posDiff.magnitude * posDir;
-            ret += -a.Velocity * drag;
-            return ret;
+        private void ApplyDistanceConstraint(IRopeSegment cur, IRopeSegment prev){
+            var posDiff = prev.NextPosition -  cur.NextPosition;
+            var deviate = posDiff.magnitude - _segmentLength;
+            if (deviate < 0) return;
+            var posDiffNorm = posDiff.normalized;
+            var posMod =  deviate * posDiffNorm;
+            var totalMass = prev.Mass + cur.Mass;
+            prev.NextPosition -= posMod * cur.Mass / totalMass;
+            cur.NextPosition += posMod * prev.Mass / totalMass;
         }
-        
-        private Vector2 ComputeGravity(IRopeSegment s){
-            return Physics2D.gravity;
+
+        private void UpdateVelocity(IEnumerable<IRopeSegment> segments){
+            foreach (var seg in segments){
+                var newVel = (seg.NextPosition - seg.Position) / Time.fixedDeltaTime;
+                var acc = (newVel - seg.Velocity) / Time.fixedDeltaTime;
+                seg.Force = acc * seg.Mass;
+                seg.Velocity = newVel;
+                seg.Position = seg.NextPosition;
+            }
+        }
+
+        private void PrintDetails(){
+            var s = "";
+            var s2 = "";
+            foreach (var seg in _segments){
+                s += seg.Position.ToString();
+                s += ", ";
+                s2 += seg.Velocity.ToString();
+                s2 += ", ";
+            }
+
+            Debug.Log($"Positions: {s}");
+            Debug.Log($"Velocities: {s2}");
         }
 
         public void SetColor(Color c){
