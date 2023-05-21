@@ -667,7 +667,7 @@ GameObject:
   - component: {fileID: 8562336660113106194}
   - component: {fileID: 8562336660113106197}
   m_Layer: 7
-  m_Name: Switch
+  m_Name: pfSwitch
   m_TagString: Switch
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

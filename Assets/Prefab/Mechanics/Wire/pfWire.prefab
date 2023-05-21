@@ -73,11 +73,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: _solveStep
-      value: 20
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: segmentMass
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: bounceLength
@@ -90,6 +90,10 @@ PrefabInstance:
     - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: _segmentCount
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
+      propertyPath: dampingFactor
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4913450557143254152, guid: 507e206eda78ab442b746c7ee730b8a7, type: 3}
       propertyPath: tautThreshold
