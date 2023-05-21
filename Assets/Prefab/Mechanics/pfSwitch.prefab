@@ -717,7 +717,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.37, y: 0.3}
+  m_Size: {x: 0.68, y: 0.3}
   m_EdgeRadius: 0
 --- !u!114 &8562336660113106197
 MonoBehaviour:
@@ -745,6 +745,7 @@ MonoBehaviour:
   onDeg: -50
   offDeg: 50
   controled: {fileID: 0}
+  switchTime: 0.2
 --- !u!1001 &8493262957808485788
 PrefabInstance:
   m_ObjectHideFlags: 0

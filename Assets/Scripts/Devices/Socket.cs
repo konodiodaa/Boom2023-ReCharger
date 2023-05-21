@@ -34,7 +34,8 @@ namespace Devices{
             }
         }
 
-        public bool IsActive(PowerVolume volume) => volume.GetCarried() is Plug2;
+        public bool IsActive(PowerVolume volume) => (volume.GetCarried() == null && _plug != null) ||
+                                                    (volume.GetCarried() is Plug2 plug && _plug == null);
 
         public void PlugIn(Plug2 plug){
             _plug = plug;
