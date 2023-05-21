@@ -67,8 +67,9 @@ public class MainPanel : MonoBehaviour
 
     private void OpenSettingPanel()
     {
-        //TODO: Setting panel
-        Debug.Log("Open Setting Panel");
+        titlePanel.gameObject.SetActive(false);
+        levelSelectPanel.gameObject.SetActive(false);
+        helpePanel.gameObject.SetActive(true);
     }
 
     private void OpenHelpPanel()

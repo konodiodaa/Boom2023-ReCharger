@@ -40,7 +40,7 @@ public class HelpPanel : MonoBehaviour
             img.sprite = TutorialImg[0];
     }
 
-    private void NextImg()
+    public void NextImg()
     {
         if (index >= TutorialImg.Count - 1)
             return;
@@ -50,7 +50,7 @@ public class HelpPanel : MonoBehaviour
         img.sprite = TutorialImg[index];
     }
 
-    private void LastImg()
+    public void LastImg()
     {
         if (index == 0) return;
         else
