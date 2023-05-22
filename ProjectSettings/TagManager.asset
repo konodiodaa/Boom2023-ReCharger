@@ -12,6 +12,7 @@ TagManager:
   - Enemy
   - LinkedPlug
   - Switch
+  - WaterPowerSource
   layers:
   - Default
   - TransparentFX
@@ -48,4 +49,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2539399095
+    locked: 0
+  - name: Middle
+    uniqueID: 2786537485
+    locked: 0
+  - name: Front
+    uniqueID: 680499941
     locked: 0

@@ -414,7 +414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0c62ae509cca2640b7ecb49b331d746, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initPower: 1
+  initPower: 3
   barCtn: {fileID: 6114804192883568688}
   socket: {fileID: 7329226606972229435}
   onSupplySign: {fileID: 6897018242180772843}
