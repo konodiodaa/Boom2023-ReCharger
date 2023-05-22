@@ -8,10 +8,11 @@ namespace Utility{
             Action end = null){
             IEnumerator Inner(){
                 start?.Invoke();
-                for (float cur = 0f; cur < totalTime; cur += Time.deltaTime){
+                for (var cur = 0f; cur < totalTime; cur += Time.deltaTime){
                     update(cur / totalTime);
                     yield return null;
                 }
+                update(1);
                 end?.Invoke();
             }
             return Inner;

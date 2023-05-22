@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Levels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,6 +10,8 @@ public class MainPanel : MonoBehaviour
     private Transform titlePanel;
     private Transform levelSelectPanel;
     private Transform helpePanel;
+
+    public LevelLoader levelLoader;
 
     private void Awake()
     {
@@ -37,9 +40,10 @@ public class MainPanel : MonoBehaviour
 
     private void StartGame()
     {
-        Debug.Log("Load Level 1");
+        // Debug.Log("Load Level 1");
         // TODO: change to level 1 id
-        // SceneManager.LoadScene("Level 1"); 
+        // SceneManager.LoadScene("Level 1");
+        levelLoader.LoadLevel(0);
     }
 
     private void QuitGame()

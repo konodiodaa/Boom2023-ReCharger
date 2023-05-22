@@ -6,5 +6,6 @@
     QuitClicked,
     HelpClicked,
     Back2Title,
-    Win
+    Win,
+    Restart,
 }
