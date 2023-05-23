@@ -9,7 +9,7 @@ public class Generator : MonoBehaviour, IPowerSupply
 {
     public Socket socket;
     private SpriteRenderer _spriteRenderer;
-    [SerializeField] private bool _hasElectricity;
+    [SerializeField] private bool _hasElectricity = false;
     private void Awake()
     {
         //GetComponent<SpriteRenderer>().color = Color.white;
@@ -35,4 +35,16 @@ public class Generator : MonoBehaviour, IPowerSupply
         }
     }
     public List<IDevice> ConnectedDevices { get; set; } = new();
+
+    public void TurnOn(){
+        if (HasElectric) return;
+        HasElectric = true;
+        IDevice.UpdateElectricityState(this);
+    }
+
+    public void TurnOff(){
+        if (!HasElectric) return;
+        HasElectric = false;
+        IDevice.UpdateElectricityState(this);
+    }
 }

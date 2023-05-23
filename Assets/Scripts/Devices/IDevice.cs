@@ -35,7 +35,7 @@ namespace Devices{
 
         public static void UpdateElectricityState(IDevice dev){
             bool FindSupply(IDevice d, System.Collections.Generic.ISet<IDevice> seen){
-                if (d is IPowerSupply) return true;
+                if (d is IPowerSupply {HasElectric: true}) return true;
                 seen.Add(d);
                 foreach (var next in d.ConnectedDevices){
                     if (seen.Contains(next)) continue;
@@ -67,5 +67,6 @@ namespace Devices{
         }
     }
 
-    public interface IPowerSupply: IDevice{}
+    public interface IPowerSupply : IDevice{
+    }
 }
