@@ -49,17 +49,20 @@ public class Rotor : MonoBehaviour
 
         if (_isRotating && _clockwise)
         {
-            _generator.HasElectric = true;
+            // _generator.HasElectric = true;
+            _generator.TurnOn();
             _rotorSprite.Rotate(0, 0, -_rotationSpeed * Time.deltaTime);
         }
         else if (_isRotating)
         {
-            _generator.HasElectric = true;
+            // _generator.HasElectric = true;
+            _generator.TurnOn();
             _rotorSprite.Rotate(0, 0, _rotationSpeed * Time.deltaTime);
         }
         else
         {
-            _generator.HasElectric = false;
+            // _generator.HasElectric = false;
+            _generator.TurnOff();
         }
     }
 }

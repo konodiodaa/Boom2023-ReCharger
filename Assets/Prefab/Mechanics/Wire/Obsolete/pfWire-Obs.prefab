@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2268244422055852891}
   - component: {fileID: 2268244422055852890}
   m_Layer: 0
-  m_Name: pfWire
+  m_Name: pfWire-Obs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
