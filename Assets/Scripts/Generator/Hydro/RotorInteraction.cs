@@ -20,7 +20,7 @@ public class RotorInteraction : MonoBehaviour, IInteractable
     {
         if (volume.GetCarried() != null)
         {
-            return "Press E to Plug!";
+            return "Press E to Install Propeller!";
         }
 
         if (volume.GetCarried() == null )
