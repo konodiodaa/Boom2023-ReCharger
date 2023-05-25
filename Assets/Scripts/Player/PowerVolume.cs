@@ -25,9 +25,12 @@ public class PowerVolume : MonoBehaviour
             if (value >= PowerRequired){
                 EventCenter.Broadcast(EventDefine.Win);
             }
+            UpdatePower();
         }
         get => _power;
     }
+
+    public Transform powerContainer;
 
     private Text Power_text;
     private Text hint_text;
@@ -168,5 +171,17 @@ public class PowerVolume : MonoBehaviour
     }
 
     public bool IsCarrying() => _carriable != null;
+
+    public void UpdatePower(){
+        for (int i = 0; i < PowerCurrent; i++){
+            if (i >= powerContainer.childCount) return;
+            var child = powerContainer.GetChild(i).GetComponent<SpriteRenderer>();
+            child.enabled = true;
+        }
+
+        for (int i = PowerCurrent; i < powerContainer.childCount; i++){
+            powerContainer.GetChild(i).GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
     
 }
