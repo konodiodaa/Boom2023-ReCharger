@@ -94,7 +94,7 @@ namespace Wires{
             gameObject.layer = _prevLayer; // LayerMask.NameToLayer("InteractionLayer");
         }
 
-        public float Mass => state == State.Carried ? (_powerVolume.movement.rb.mass + body.mass) : body.mass;
+        public float Mass => state == State.Carried ? (_powerVolume.Movement.rb.mass + body.mass) : body.mass;
 
         public Vector2 Velocity{
             set{
@@ -105,7 +105,7 @@ namespace Wires{
                 // if (IsCarried) _powerVolume.movement.rb.velocity += value - body.velocity;
                 body.velocity = value;
             }
-            get => IsCarried ? _powerVolume.movement.rb.velocity : body.velocity;
+            get => IsCarried ? _powerVolume.Movement.rb.velocity : body.velocity;
         }
 
         public Vector2 Position{

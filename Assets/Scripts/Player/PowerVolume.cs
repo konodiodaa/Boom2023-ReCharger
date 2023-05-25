@@ -5,6 +5,7 @@ using System.Linq;
 using Chargers;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PowerVolume : MonoBehaviour
@@ -32,22 +33,22 @@ public class PowerVolume : MonoBehaviour
 
     public Transform powerContainer;
 
-    private Text Power_text;
-    private Text hint_text;
+    public Text Power_text;
+    [FormerlySerializedAs("hint_text")] public Text hintText;
 
     private ICarriable _carriable;
+    
+    [NonSerialized]
+    public PlayerMovement Movement;
 
-    public PlayerMovement movement;
-
-    public FixedJoint2D joint;
+    [NonSerialized]
+    public FixedJoint2D Joint;
     
     private void Awake(){
         PowerCurrent = initPower;
         // interactionAva = false;
-        movement = GetComponent<PlayerMovement>();
-        joint = GetComponent<FixedJoint2D>();
-        Power_text = transform.Find("Canvas").transform.Find("PowerText").GetComponent<Text>();
-        hint_text = transform.Find("Canvas").transform.Find("ChargeHint").GetComponent<Text>();
+        Movement = GetComponent<PlayerMovement>();
+        Joint = GetComponent<FixedJoint2D>();
     }
 
     private void Update()
@@ -106,24 +107,24 @@ public class PowerVolume : MonoBehaviour
 
         if (_targetInteractable is null){
             if (_carriable is not null){
-                hint_text.gameObject.SetActive(true);
-                hint_text.text = "Press E to Drop";
+                hintText.gameObject.SetActive(true);
+                hintText.text = "Press E to Drop";
                 return;
             }
-            hint_text.gameObject.SetActive(false);
+            hintText.gameObject.SetActive(false);
             return;
         }
         if (_targetInteractable.GetInstruction(this) is { } instStr){
-            hint_text.gameObject.SetActive(true);
-            hint_text.text = instStr;
+            hintText.gameObject.SetActive(true);
+            hintText.text = instStr;
             return;
         }
         if (_carriable is not null){
-            hint_text.gameObject.SetActive(true);
-            hint_text.text = "Press E to Drop";
+            hintText.gameObject.SetActive(true);
+            hintText.text = "Press E to Drop";
             return;
         }
-        hint_text.gameObject.SetActive(false);
+        hintText.gameObject.SetActive(false);
     }
 
     private void DoInteraction(){
@@ -139,14 +140,14 @@ public class PowerVolume : MonoBehaviour
         _carriable = carriable;
         carriable.OnPickUp(this);
         var body = carriable.Body;
-        joint.enabled = true;
-        joint.connectedBody = body;
+        Joint.enabled = true;
+        Joint.connectedBody = body;
     }
 
     public void DropDownCurrentCarriable(){
         _carriable.OnDropDown();
         _carriable = null;
-        joint.enabled = false;
+        Joint.enabled = false;
     }
 
     public int GetCurrentPower()

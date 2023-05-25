@@ -19,13 +19,10 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
     public int CurPower{
         set{
             _curPower = value;
-            Power_text.text = value.ToString();
             UpdatePowerBars();
         }
         get => _curPower;
     }
-
-    private Text Power_text;
 
     public Transform barCtn;
     public Socket socket;
@@ -33,7 +30,6 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
     public SpriteRenderer onSupplySign;
 
     private void Awake(){
-        Power_text = transform.Find("Canvas").transform.GetComponentInChildren<Text>();
         CurPower = initPower;
         socket.SetDevice(this);
     }

@@ -175,7 +175,7 @@ public class PropellerBlade : MonoBehaviour, ICarriable
     }
 
   
-    public float Mass => state == State.Carried ? (_powerVolume.movement.rb.mass + body.mass) : body.mass;
+    public float Mass => state == State.Carried ? (_powerVolume.Movement.rb.mass + body.mass) : body.mass;
 
     public Vector2 Velocity
     {
@@ -189,7 +189,7 @@ public class PropellerBlade : MonoBehaviour, ICarriable
             // if (IsCarried) _powerVolume.movement.rb.velocity += value - body.velocity;
             body.velocity = value;
         }
-        get => IsCarried ? _powerVolume.movement.rb.velocity : body.velocity;
+        get => IsCarried ? _powerVolume.Movement.rb.velocity : body.velocity;
     }
 
     public Vector2 Position
