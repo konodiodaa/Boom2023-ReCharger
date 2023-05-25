@@ -280,7 +280,7 @@ GameObject:
   - component: {fileID: 5593631789763501453}
   - component: {fileID: 5593631789763501452}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player-obs
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -370,7 +370,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 6200000, guid: 5d5d6fd8da6ef4f41ab0c46721d2a23d, type: 2}
+  m_Material: {fileID: 6200000, guid: 7327e2097ea708c489e1ffc0ecc56e9d, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -405,7 +405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   speed: 7
-  jumpForce: 12
+  jumpForce: 3
   dashDistance: 5
   dashSpeed: 30
   dashTime: 0.1
@@ -415,8 +415,6 @@ MonoBehaviour:
   dashTimeLeft: 0
   lastDash: -100
   counterForceFactor: 1
-  jumpInertiaTime: 0.1
-  carriedJumpAddition: 10
 --- !u!114 &5593631789763501444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -449,7 +447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d091a2c730c96d94eaf0b5254a0ac787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fall_coe: 3
+  fall_coe: 8
   lowJump_coe: 8
 --- !u!114 &5593631789763501453
 MonoBehaviour:
@@ -464,8 +462,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PowerRequired: 3
-  PowerCurrent: 2
-  targetCollider: {fileID: 0}
+  initPower: 0
+  powerUpLimit: 3
   movement: {fileID: 0}
   joint: {fileID: 0}
 --- !u!114 &5593631789763501452
@@ -480,4 +478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83082a1da74668846808cc9932569477, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackRange: 1
+  chargeRange: 1
+  volume: {fileID: 0}
+  spr: {fileID: 0}
+  _cd: 0.2

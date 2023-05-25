@@ -292,7 +292,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 6200000, guid: 5d5d6fd8da6ef4f41ab0c46721d2a23d, type: 2}
+  m_Material: {fileID: 6200000, guid: 7327e2097ea708c489e1ffc0ecc56e9d, type: 2}
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -327,9 +327,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
   speed: 5
-  jumpForce: 12
-  dashDistance: 5
-  dashSpeed: 30
+  jumpForce: 8
+  dashDistance: 1.5
+  dashSpeed: 26
   dashTime: 0.1
   dashAfterImageDistance: 0
   dashCooldown: 0.15
@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fall_coe: 3
-  lowJump_coe: 8
+  lowJump_coe: 3
 --- !u!114 &3385662274063055500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -541,7 +541,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5614977556075091393}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -576,7 +576,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.95811033, g: 1, b: 0, a: 0}
+  m_Color: {r: 0.95811033, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
