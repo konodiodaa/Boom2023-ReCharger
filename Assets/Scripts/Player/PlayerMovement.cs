@@ -77,6 +77,8 @@ public class PlayerMovement : MonoBehaviour
         moveInput = Input.GetAxis("Horizontal");
         if(moveInput != 0)
         {
+            Debug.Log("Walk");
+            GetComponent<Animator>().SetTrigger("Walk");
             faceDir = moveInput > 0 ? 1 : -1;
         }
 
@@ -85,12 +87,16 @@ public class PlayerMovement : MonoBehaviour
             if (coll.onGround)
             {
                 Jump(Vector2.up);
+                Debug.Log("Jump");
+                GetComponent<Animator>().SetTrigger("Jump");
             }
             else if(canDoubleJump && powVol.GetCurrentPower() > 0)
             {
                 powVol.PowerChange(-1);
                 canDoubleJump = false;
                 Jump(Vector2.up);
+                Debug.Log("Double Jump");
+                GetComponent<Animator>().SetTrigger("Jump");
             }
         }
 
@@ -121,7 +127,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Dash"))// && powVol.GetCarried() != null) 
         {
             if (Time.time >= (lastDash + dashCooldown) && powVol.GetCurrentPower() > 0)
+            {
                 StartDash();
+                Debug.Log("Dash");
+                GetComponent<Animator>().SetTrigger("Dash");
+            }
         }
     }
     
