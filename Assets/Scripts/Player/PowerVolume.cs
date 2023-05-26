@@ -62,7 +62,7 @@ public class PowerVolume : MonoBehaviour
         if(Input.GetButtonUp("Interact")) DoInteraction();
         if (PowerCurrent < 1)
         {
-            Debug.Log("Uncharge");
+            // Debug.Log("Uncharge");
             GetComponent<Animator>().SetTrigger("Uncharge");
         } else
         {

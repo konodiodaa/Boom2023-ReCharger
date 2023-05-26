@@ -110,6 +110,10 @@ namespace Wires{
                 DampVelocity(seg);
                 seg.Velocity += Physics2D.gravity * Time.fixedDeltaTime;
                 seg.NextPosition = seg.Position + seg.Velocity * Time.fixedDeltaTime;
+                var col = seg.AvoidCollision(seg.NextPosition, out var next);
+                if (col == null || col.GetComponent<MovePlatform>() is not { IsActive: true } movePlatform) continue;
+                seg.Velocity += movePlatform.CurrentVelocity;
+                seg.NextPosition = next;
             }
         }
 
@@ -125,9 +129,11 @@ namespace Wires{
 
             for (int i = 1; i < segments.Count; i++){
                 ApplyDistanceConstraint(segments[i], segments[i-1]);
-                segments[i].NextPosition = segments[i].AvoidCollision(segments[i].NextPosition);
+                segments[i].AvoidCollision(segments[i].NextPosition, out var next);
+                segments[i].NextPosition = next;
             }
-            segments[0].NextPosition = segments[0].AvoidCollision(segments[0].NextPosition);
+            segments[0].AvoidCollision(segments[0].NextPosition, out var next1);
+            segments[0].NextPosition = next1;
         }
 
         private void ApplyDistanceConstraint(IRopeSegment cur, IRopeSegment prev){

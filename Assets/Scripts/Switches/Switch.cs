@@ -63,9 +63,16 @@ namespace Switches{
         private bool _isOn = false;
         public bool IsOn{
             set{
-                _isOn = value;
                 UpdateSprites();
                 // onInd.color = value ? onColor : offColor;
+                if (value != _isOn){
+                    if(value){
+                        _animator.SetTrigger("TurnOn");
+                    } else {
+                        _animator.SetTrigger("TurnOff");
+                    }
+                }
+                _isOn = value;
                 CallControledMethod();
             }
             get => _isOn;
@@ -149,12 +156,6 @@ namespace Switches{
         }
 
         private void UpdateSprites(){
-            if (IsOn){
-                _animator.SetTrigger("TurnOn");
-            } else{
-                _animator.SetTrigger("TurnOff");
-            }
-
             if (HasElectric && IsOn){
                 switchLight.sprite = switchOnSpr;
             } else{

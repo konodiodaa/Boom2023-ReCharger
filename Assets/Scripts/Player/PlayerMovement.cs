@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
         moveInput = Input.GetAxis("Horizontal");
         if(moveInput != 0)
         {
-            Debug.Log("Walk");
+            // Debug.Log("Walk");
             GetComponent<Animator>().SetTrigger("Walk");
             faceDir = moveInput > 0 ? 1 : -1;
         }
@@ -87,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
             if (coll.onGround)
             {
                 Jump(Vector2.up);
-                Debug.Log("Jump");
+                // Debug.Log("Jump");
                 GetComponent<Animator>().SetTrigger("Jump");
             }
             else if(canDoubleJump && powVol.GetCurrentPower() > 0)
@@ -95,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
                 powVol.PowerChange(-1);
                 canDoubleJump = false;
                 Jump(Vector2.up);
-                Debug.Log("Double Jump");
+                // Debug.Log("Double Jump");
                 GetComponent<Animator>().SetTrigger("Jump");
             }
         }
@@ -139,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
     private float _prevMass;
     private bool _onRise = false;
     private void Jump(Vector2 dir){
-        rb.velocity = new Vector2(rb.velocity.x, 0) + dir * (jumpForce * (powVol.IsCarrying() ? 3 : 1));
+        rb.velocity = new Vector2(rb.velocity.x, 0) + dir * (jumpForce * (powVol.IsCarrying() ? 1 : 1));
         _onRise = true;
     }
 

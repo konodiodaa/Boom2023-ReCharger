@@ -14,6 +14,12 @@ public class MovePlatform : MonoBehaviour, ISwitchControled
     private float cur_dist;
     private bool reverse;
 
+    public Vector2 CurrentVelocity => _isActive ? (reverse ? Vector2.left * speed : Vector2.right * speed) : Vector2.zero;
+
+    public bool IsActive => _isActive;
+    
+    
+
     private void Awake()
     {
         cur_dist = 0;

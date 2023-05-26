@@ -9,12 +9,14 @@ namespace Wires{
         Vector2 Force{ set; get; }
         IRopeSegment PrevSeg{ set; get; }
         IRopeSegment NextSeg{ set; get; }
+
         /// <summary>
         /// Put testPosition into test, output the final position
         /// </summary>
         /// <param name="testPosition"></param>
+        /// <param name="ret"></param>
         /// <returns></returns>
-        Vector2 AvoidCollision(Vector2 testPosition);
+        Collider2D AvoidCollision(Vector2 testPosition, out Vector2 ret);
         bool IsFree();
     }
 }
