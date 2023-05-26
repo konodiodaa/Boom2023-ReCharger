@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 671503264599083356}
   - component: {fileID: 671503264599083357}
   - component: {fileID: 3640490512927138090}
+  - component: {fileID: 3676997092990161177}
   m_Layer: 30
   m_Name: Plug2
   m_TagString: Untagged
@@ -97,7 +98,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 671503264599083329}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5a8ce5a7dde3d204bbd0eebef7020b70, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -150,6 +151,19 @@ MonoBehaviour:
   state: 0
   body: {fileID: 671503264599083357}
   interaction: {fileID: 9134870400467103617}
+--- !u!114 &3676997092990161177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671503264599083329}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e8cb20223544ba3bd5ebdc2c65ca4b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outline: {fileID: 2100000, guid: 2aa77db59d1dea348bc72b00dff0ee72, type: 2}
 --- !u!1 &2327990428389270389
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,3 +236,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plug: {fileID: 3640490512927138090}
+  outliner: {fileID: 3676997092990161177}

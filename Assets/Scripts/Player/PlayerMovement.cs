@@ -139,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
     private float _prevMass;
     private bool _onRise = false;
     private void Jump(Vector2 dir){
-        rb.velocity = new Vector2(rb.velocity.x, 0) + dir * jumpForce;
+        rb.velocity = new Vector2(rb.velocity.x, 0) + dir * (jumpForce * (powVol.IsCarrying() ? 3 : 1));
         _onRise = true;
     }
 

@@ -2,6 +2,7 @@ using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 using Wires;
 
 public class BladeInteraction : MonoBehaviour, IInteractable
@@ -44,5 +45,14 @@ public class BladeInteraction : MonoBehaviour, IInteractable
     private void OnEnable()
     {
         GetComponent<Collider2D>().enabled = true;
+    }
+    
+    public Outliner outliner;
+    public void OnFocused(PowerVolume volume){
+        outliner.enabled = true;
+    }
+
+    public void OnLoseFocus(PowerVolume volume){
+        outliner.enabled = false;
     }
 }

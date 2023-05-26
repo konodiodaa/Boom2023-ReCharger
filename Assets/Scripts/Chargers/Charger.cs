@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using Devices;
 using Player;
 using UnityEngine.Serialization;
+using Utility;
 using Socket = Devices.Socket;
 
 
@@ -28,6 +29,8 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
     public Socket socket;
 
     public SpriteRenderer onSupplySign;
+
+    public Outliner outliner;
 
     private void Awake(){
         CurPower = initPower;
@@ -67,5 +70,12 @@ public class Charger : MonoBehaviour, IDevice, IInteractable
     }
 
     public bool IsActive(PowerVolume volume) => !volume.IsCarrying() && ( HasElectric || CurPower > 0);
+    public void OnFocused(PowerVolume volume){
+        outliner.enabled = true;
+    }
+
+    public void OnLoseFocus(PowerVolume volume){
+        outliner.enabled = false;
+    }
 }
     

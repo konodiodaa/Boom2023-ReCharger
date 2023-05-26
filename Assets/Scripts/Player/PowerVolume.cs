@@ -80,6 +80,10 @@ public class PowerVolume : MonoBehaviour
     
     private void CollisionCheck()
     {
+        foreach (var c in _collider2Ds){
+            if (c.GetComponent<IInteractable>() is not{ } interactable) continue;
+            interactable.OnLoseFocus(this);
+        }
         var num = Physics2D.OverlapCircle(transform.position, 1f, new ContactFilter2D(){
             useTriggers = true,
             useLayerMask = true,
@@ -106,7 +110,9 @@ public class PowerVolume : MonoBehaviour
 
         if (i == num){
             _targetInteractable = null;
+            return;
         }
+        _targetInteractable.OnFocused(this);
     }
 
     private void UpdateInstruction()

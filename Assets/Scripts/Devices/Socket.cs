@@ -1,11 +1,13 @@
 ﻿using Player;
 using UnityEngine;
+using Utility;
 using Wires;
 
 namespace Devices{
     public class Socket: MonoBehaviour, IInteractable{
         private Plug2 _plug = null;
         private IDevice _connectedDevice = null;
+
 
         public void SetDevice(IDevice device){
             _connectedDevice = device;
@@ -36,7 +38,7 @@ namespace Devices{
 
         public bool IsActive(PowerVolume volume) => (volume.GetCarried() == null && _plug != null) ||
                                                     (volume.GetCarried() is Plug2 plug && _plug == null);
-
+        
         public void PlugIn(Plug2 plug){
             _plug = plug;
             _plug.OnPlugIn(this);
@@ -54,6 +56,15 @@ namespace Devices{
                 IDevice.Disconnect(_connectedDevice, ret);
             }
             return ret;
+        }
+        
+        public Outliner outliner;
+        public void OnFocused(PowerVolume volume){
+            outliner.enabled = true;
+        }
+
+        public void OnLoseFocus(PowerVolume volume){
+            outliner.enabled = false;
         }
     }
 }

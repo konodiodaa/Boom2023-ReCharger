@@ -3,6 +3,7 @@ using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utility;
 using Wires;
 
 public class RotorInteraction : MonoBehaviour, IInteractable
@@ -45,6 +46,15 @@ public class RotorInteraction : MonoBehaviour, IInteractable
 
     public bool IsActive(PowerVolume volume) => (volume.GetCarried() == null && _rotor.Blades.Count >= 4) ||
                                                 (volume.GetCarried() is PropellerBlade blade && _rotor.Blades.Count <= 4);
+
+    public Outliner outliner;
+    public void OnFocused(PowerVolume volume){
+        outliner.enabled = true;
+    }
+
+    public void OnLoseFocus(PowerVolume volume){
+        outliner.enabled = false;
+    }
 
     public void PlugIn(PropellerBlade blade)
     {

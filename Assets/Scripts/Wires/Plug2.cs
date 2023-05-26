@@ -140,6 +140,6 @@ namespace Wires{
         public Vector2 DistanceDirection => (PrevSeg == null ? (Position - NextSeg.Position) : (PrevSeg.Position - Position) ).normalized;
 
         public Rigidbody2D Body => body;
-
+        
     }
 }
