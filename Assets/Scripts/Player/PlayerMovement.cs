@@ -80,6 +80,9 @@ public class PlayerMovement : MonoBehaviour
             // Debug.Log("Walk");
             GetComponent<Animator>().SetTrigger("Walk");
             faceDir = moveInput > 0 ? 1 : -1;
+        } else
+        {
+            GetComponent<Animator>().ResetTrigger("Walk");
         }
 
         if (Input.GetButtonDown("Jump"))
@@ -94,9 +97,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 powVol.PowerChange(-1);
                 canDoubleJump = false;
+                GetComponent<Animator>().SetTrigger("DoubleJump");
                 Jump(Vector2.up);
                 // Debug.Log("Double Jump");
-                GetComponent<Animator>().SetTrigger("Jump");
             }
         }
 

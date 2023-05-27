@@ -60,14 +60,6 @@ public class PowerVolume : MonoBehaviour
         CollisionCheck(); 
         UpdateInstruction();
         if(Input.GetButtonUp("Interact")) DoInteraction();
-        if (PowerCurrent < 1)
-        {
-            // Debug.Log("Uncharge");
-            GetComponent<Animator>().SetTrigger("Uncharge");
-        } else
-        {
-            GetComponent<Animator>().ResetTrigger("Uncharge");
-        }
     }
 
     public void PowerChange(int value)
@@ -181,7 +173,6 @@ public class PowerVolume : MonoBehaviour
     /// <param name="powerNum"></param>
     /// <returns>Actual powerNum that has been charged</returns>
     public int Charge(int powerNum){
-        Debug.Log("Charge");
         foreach (var param in GetComponent<Animator>().parameters)
         {
             if (param.type == AnimatorControllerParameterType.Trigger)
@@ -189,7 +180,6 @@ public class PowerVolume : MonoBehaviour
                 GetComponent<Animator>().ResetTrigger(param.name);
             }
         }
-        GetComponent<Animator>().SetTrigger("Charge");
         var cur = PowerCurrent;
         cur = Math.Clamp(cur + powerNum, 0, powerUpLimit);
         var ret = cur - PowerCurrent;
