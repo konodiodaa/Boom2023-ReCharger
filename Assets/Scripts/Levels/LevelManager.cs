@@ -4,7 +4,7 @@ using Levels;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour{
-    public int levelMax = 10;
+    public const int LevelMax = 3;
     public LevelLoader loader;
     public LevelInfo info;
 
@@ -21,11 +21,11 @@ public class LevelManager : MonoBehaviour{
     }
 
     public void GoNext(){
-        if (info.id == 10) return;
+        if (info.id == LevelMax) return;
         loader.LoadLevelWithTween(info.id + 1);
     }
 
     public bool ReachLastLevel(){
-        return info.id == 10;
+        return info.id == LevelMax;
     }
 }

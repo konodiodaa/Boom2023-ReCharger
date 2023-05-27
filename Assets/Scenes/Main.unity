@@ -3404,6 +3404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   count: 14
   levelBTNPrefab: {fileID: 7435481012364684043, guid: 77afbc3f4bf4e2d4fa73f95e47ba10e1, type: 3}
+  loader: {fileID: 979137842}
 --- !u!1 &2085382664
 GameObject:
   m_ObjectHideFlags: 0

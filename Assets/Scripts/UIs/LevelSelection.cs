@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Levels;
 using UnityEngine;
 
 public class LevelSelection : MonoBehaviour
@@ -14,6 +15,8 @@ public class LevelSelection : MonoBehaviour
     [SerializeField]
     private GameObject levelBTNPrefab;
 
+    public LevelLoader loader;
+
     private void Awake()
     {
         grid = transform.Find("Levels");
@@ -23,10 +26,11 @@ public class LevelSelection : MonoBehaviour
 
     private void InitLevelBTNs()
     {
-        for(int i = 0;i<count;i++)
+        for(int i = 0;i<LevelManager.LevelMax;i++)
         {
             GameObject go = Instantiate(levelBTNPrefab,grid.transform);
             go.GetComponent<LevelBTN>().levelId = i + 1;
+            go.GetComponent<LevelBTN>().loader = loader;
         }
     }
 }

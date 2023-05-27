@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Levels;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -12,6 +13,8 @@ public class LevelBTN : MonoBehaviour
 
     [HideInInspector]
     public int levelId = -1;
+
+    [HideInInspector] public LevelLoader loader;
 
     private void Awake()
     {
@@ -34,6 +37,7 @@ public class LevelBTN : MonoBehaviour
             Debug.Log("level: " + levelId);
             // TODO: change to level id
             // SceneManager.LoadScene(levelId);
+            loader.LoadLevelWithTween(levelId);
         }
     }
 }
