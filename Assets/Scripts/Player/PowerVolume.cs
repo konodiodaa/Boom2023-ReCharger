@@ -203,6 +203,7 @@ public class PowerVolume : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D collision){
+        if (Movement.IsDead) return;
         if(collision.gameObject.CompareTag("Enemy"))
         {
             EventCenter.Broadcast(EventDefine.Lose);

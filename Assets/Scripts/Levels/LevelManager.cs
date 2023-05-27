@@ -8,14 +8,6 @@ public class LevelManager : MonoBehaviour{
     public LevelLoader loader;
     public LevelInfo info;
 
-    private void Start(){
-        EventCenter.AddListener(EventDefine.Restart, Restart);
-    }
-
-    private void OnDestroy(){
-        EventCenter.RemoveListener(EventDefine.Restart, Restart);
-    }
-    
     public void Restart(){
         loader.LoadLevelWithTween(info.id);
     }

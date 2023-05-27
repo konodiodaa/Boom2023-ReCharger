@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utility;
 using Wires;
 
@@ -52,9 +54,11 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 _totalForce = Vector2.zero;
 
+    private Camera _main;
 
     void Awake()
     {
+        _main = Camera.main;
         canDoubleJump = true;
         coll = GetComponent<Collision>();
         powVol = GetComponent<PowerVolume>();
@@ -71,9 +75,11 @@ public class PlayerMovement : MonoBehaviour
         }
         CheckDash();
     }
+    [NonSerialized]
+    public bool IsDead = false;
 
-    private void Movement()
-    {
+    private void Movement(){
+        if (IsDead) return;
         moveInput = Input.GetAxis("Horizontal");
         if(moveInput != 0)
         {
@@ -112,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
         {
             canDoubleJump = true;
         }
-        isOutofRange();
+        CheckRange();
     }
     
     private void FixedUpdate()
@@ -182,17 +188,12 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsOnRise => _onRise;
 
-    private bool isOutofRange()
+    private void CheckRange()
     {
-        Camera cam = Camera.main;
-
-        Vector3 screenPos = cam.WorldToViewportPoint(transform.position);
-
-        if (screenPos.y < -1)
-        {
+        var screenPos = _main.WorldToViewportPoint(transform.position);
+        if (screenPos.y < -1){
+            IsDead = true;
             EventCenter.Broadcast(EventDefine.Lose);
         }
-
-        return false;
     }
 }

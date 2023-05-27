@@ -62,14 +62,10 @@ public class PausePanel : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
-    void LoseHandle()
-    {
-        if(LosePanel!=null)
-        {
-            LosePanel.SetActive(true);
-            Time.timeScale = 0.0f;
-        }
-
+    void LoseHandle(){
+        if (LosePanel == null) return;
+        LosePanel.SetActive(true);
+        Time.timeScale = 0.0f;
     }
 
     private void PauseHandle()
@@ -87,6 +83,7 @@ public class PausePanel : MonoBehaviour
         PauselPanel.SetActive(false);
         LosePanel.SetActive(false);
         manager.Restart();
+        // EventCenter.Broadcast(EventDefine.Restart);
     }
 
     private void NextLevelHandle()
