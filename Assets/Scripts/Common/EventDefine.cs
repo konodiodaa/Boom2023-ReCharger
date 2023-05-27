@@ -8,4 +8,8 @@
     Back2Title,
     Win,
     Restart,
+    NextLevel,
+    Continue,
+    Pause,
+    Lose
 }

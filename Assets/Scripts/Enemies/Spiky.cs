@@ -16,7 +16,7 @@ namespace Enemies{
         private void FixedUpdate(){
             if (isDead) return;
             var prev = transform.position;
-            transform.position = prev + Vector3.left * 0.02f;
+           // transform.position = prev + Vector3.left * 0.02f;
         }
 
         public void Die(){

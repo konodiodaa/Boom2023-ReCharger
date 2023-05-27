@@ -104,6 +104,7 @@ public class PlayerMovement : MonoBehaviour
         {
             doubleJump = true;
         }
+        isOutofRange();
     }
     
     private void FixedUpdate()
@@ -171,4 +172,18 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public bool IsOnRise => _onRise;
+
+    private bool isOutofRange()
+    {
+        Camera cam = Camera.main;
+
+        Vector3 screenPos = cam.WorldToViewportPoint(transform.position);
+
+        if (screenPos.y < -1)
+        {
+            EventCenter.Broadcast(EventDefine.Lose);
+        }
+
+        return false;
+    }
 }

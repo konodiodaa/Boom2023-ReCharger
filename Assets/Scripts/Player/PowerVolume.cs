@@ -168,5 +168,13 @@ public class PowerVolume : MonoBehaviour
     }
 
     public bool IsCarrying() => _carriable != null;
-    
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            EventCenter.Broadcast(EventDefine.Lose);
+        }
+    }
+
 }
