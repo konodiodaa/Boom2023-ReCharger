@@ -63,7 +63,6 @@ namespace Switches{
         private bool _isOn = false;
         public bool IsOn{
             set{
-                UpdateSprites();
                 // onInd.color = value ? onColor : offColor;
                 if (value != _isOn){
                     if(value){
@@ -73,6 +72,7 @@ namespace Switches{
                     }
                 }
                 _isOn = value;
+                UpdateSprites();
                 CallControledMethod();
             }
             get => _isOn;
@@ -135,10 +135,12 @@ namespace Switches{
 
         public void OnFocused(PowerVolume volume){
             outliner.enabled = true;
+            _controled?.Highlight();
         }
 
         public void OnLoseFocus(PowerVolume volume){
             outliner.enabled = false;
+            _controled?.RemoveHighlight();
         }
 
         private void SetCirclesColor(Color c){
@@ -157,8 +159,10 @@ namespace Switches{
 
         private void UpdateSprites(){
             if (HasElectric && IsOn){
+                Debug.Log("Switch Is On");
                 switchLight.sprite = switchOnSpr;
             } else{
+                Debug.Log("Switch Is On");
                 switchLight.sprite = switchOffSpr;
             }
 
