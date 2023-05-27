@@ -16,16 +16,14 @@ public class SmoothJump : MonoBehaviour
         pm = GetComponent<PlayerMovement>();
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        if (rb.velocity.y < 0 && !pm.isDashing)
-        {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (fall_coe - 1) * Time.fixedDeltaTime;
-        }
-        else if (rb.velocity.y > 0 && !Input.GetButton("Jump") && !pm.isDashing)
-        {
-            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJump_coe - 1) * Time.fixedDeltaTime;
+    private void FixedUpdate(){
+        switch (rb.velocity.y){
+            case <= 0 when !pm.isDashing:
+                rb.velocity += Vector2.up * (Physics2D.gravity.y * (fall_coe - 1) * Time.fixedDeltaTime);
+                break;
+            case > 0 when !Input.GetButton("Jump") && !pm.isDashing:
+                rb.velocity += Vector2.up * (Physics2D.gravity.y * (lowJump_coe - 1) * Time.fixedDeltaTime);
+                break;
         }
     }
 }

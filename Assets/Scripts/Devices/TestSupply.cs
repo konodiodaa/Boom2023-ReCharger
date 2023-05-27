@@ -7,7 +7,7 @@ namespace Devices{
         public Socket socket;
 
         private void Awake(){
-            GetComponent<SpriteRenderer>().color = Color.green;
+            // GetComponent<SpriteRenderer>().color = Color.green;
             socket.SetDevice(this);
         }
 

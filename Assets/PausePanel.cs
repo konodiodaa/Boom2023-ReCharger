@@ -1,6 +1,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using Levels;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,8 @@ public class PausePanel : MonoBehaviour
     private GameObject ContinueBTN;
     [SerializeField]
     private GameObject NextLevelBTN;
+
+    public LevelManager manager;
 
     private void Awake()
     {
@@ -69,7 +72,7 @@ public class PausePanel : MonoBehaviour
 
     }
 
-    void PauseHandle()
+    private void PauseHandle()
     {
         title.text = "Pause";
         NextLevelBTN.SetActive(false);
@@ -78,36 +81,34 @@ public class PausePanel : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
-    void RestartHandle()
+    private void RestartHandle()
     {
         Time.timeScale = 1.0f;
         PauselPanel.SetActive(false);
         LosePanel.SetActive(false);
-        // TODO: replace to SceneManager.GetActiveScene().buildIndex
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        manager.Restart();
     }
 
-    void NextLevelHandle()
+    private void NextLevelHandle()
     {
         Time.timeScale = 1.0f;
         PauselPanel.SetActive(false);
         LosePanel.SetActive(false);
         Debug.Log("Load Next Level");
-        // TODO: use it when with level loader
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        manager.GoNext();
+        
     }
 
-    void Back2TitleHandle()
+    private void Back2TitleHandle()
     {
         Time.timeScale = 1.0f;
         PauselPanel.SetActive(false);
         LosePanel.SetActive(false);
         Debug.Log("Load Main Title");
-        // TODO: rename it with main title scene
-        //SceneManager.LoadScene("UI Issues");
+        SceneManager.LoadScene("Main");
     }
 
-    void ContinueHandle()
+    private void ContinueHandle()
     {
         PauselPanel.SetActive(false);
         LosePanel.SetActive(false);

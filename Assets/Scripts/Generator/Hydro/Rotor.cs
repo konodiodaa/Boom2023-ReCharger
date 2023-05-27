@@ -37,11 +37,11 @@ public class Rotor : MonoBehaviour
                 _isRotating = true;
                 if (blade.OnRightSide)
                 {
-                    _clockwise = false;
+                    _clockwise = true;
                 }
                 else
                 {
-                    _clockwise = true;
+                    _clockwise = false;
                 }
             }
         }

@@ -1,5 +1,9 @@
-﻿using Player;
+﻿using System;
+using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+using Utility;
 
 namespace Wires{
     public class PlugInteraction: MonoBehaviour, IInteractable{
@@ -29,7 +33,17 @@ namespace Wires{
 
         bool IInteractable.IsActive(PowerVolume volume) => !volume.IsCarrying();
 
-            private void OnDisable(){
+
+        public Outliner outliner;
+        public void OnFocused(PowerVolume volume){
+            outliner.enabled = true;
+        }
+
+        public void OnLoseFocus(PowerVolume volume){
+            outliner.enabled = false;
+        }
+
+        private void OnDisable(){
             GetComponent<Collider2D>().enabled = false;
         }
 

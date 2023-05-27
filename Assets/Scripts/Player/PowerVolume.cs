@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Chargers;
+using Enemies;
 using Player;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PowerVolume : MonoBehaviour
@@ -25,26 +27,29 @@ public class PowerVolume : MonoBehaviour
             if (value >= PowerRequired){
                 EventCenter.Broadcast(EventDefine.Win);
             }
+            UpdatePower();
         }
         get => _power;
     }
 
-    private Text Power_text;
-    private Text hint_text;
+    public Transform powerContainer;
+
+    public Text Power_text;
+    [FormerlySerializedAs("hint_text")] public Text hintText;
 
     private ICarriable _carriable;
+    
+    [NonSerialized]
+    public PlayerMovement Movement;
 
-    public PlayerMovement movement;
-
-    public FixedJoint2D joint;
+    [NonSerialized]
+    public FixedJoint2D Joint;
     
     private void Awake(){
         PowerCurrent = initPower;
         // interactionAva = false;
-        movement = GetComponent<PlayerMovement>();
-        joint = GetComponent<FixedJoint2D>();
-        Power_text = transform.Find("Canvas").transform.Find("PowerText").GetComponent<Text>();
-        hint_text = transform.Find("Canvas").transform.Find("ChargeHint").GetComponent<Text>();
+        Movement = GetComponent<PlayerMovement>();
+        Joint = GetComponent<FixedJoint2D>();
     }
 
     private void Update()
@@ -56,7 +61,6 @@ public class PowerVolume : MonoBehaviour
         CollisionCheck(); 
         UpdateInstruction();
         if(Input.GetButtonUp("Interact")) DoInteraction();
-
     }
 
     public void PowerChange(int value)
@@ -69,6 +73,10 @@ public class PowerVolume : MonoBehaviour
     
     private void CollisionCheck()
     {
+        foreach (var c in _collider2Ds){
+            if (c.GetComponent<IInteractable>() is not{ } interactable) continue;
+            interactable.OnLoseFocus(this);
+        }
         var num = Physics2D.OverlapCircle(transform.position, 1f, new ContactFilter2D(){
             useTriggers = true,
             useLayerMask = true,
@@ -95,7 +103,9 @@ public class PowerVolume : MonoBehaviour
 
         if (i == num){
             _targetInteractable = null;
+            return;
         }
+        _targetInteractable.OnFocused(this);
     }
 
     private void UpdateInstruction()
@@ -103,24 +113,24 @@ public class PowerVolume : MonoBehaviour
 
         if (_targetInteractable is null){
             if (_carriable is not null){
-                hint_text.gameObject.SetActive(true);
-                hint_text.text = "Press E to Drop";
+                hintText.gameObject.SetActive(true);
+                hintText.text = "Press E to Drop";
                 return;
             }
-            hint_text.gameObject.SetActive(false);
+            hintText.gameObject.SetActive(false);
             return;
         }
         if (_targetInteractable.GetInstruction(this) is { } instStr){
-            hint_text.gameObject.SetActive(true);
-            hint_text.text = instStr;
+            hintText.gameObject.SetActive(true);
+            hintText.text = instStr;
             return;
         }
         if (_carriable is not null){
-            hint_text.gameObject.SetActive(true);
-            hint_text.text = "Press E to Drop";
+            hintText.gameObject.SetActive(true);
+            hintText.text = "Press E to Drop";
             return;
         }
-        hint_text.gameObject.SetActive(false);
+        hintText.gameObject.SetActive(false);
     }
 
     private void DoInteraction(){
@@ -133,17 +143,21 @@ public class PowerVolume : MonoBehaviour
     }
 
     public void PickUp(ICarriable carriable){
+        Debug.Log("Picking Up");
+        GetComponent<Animator>().SetTrigger("Hold");
         _carriable = carriable;
         carriable.OnPickUp(this);
         var body = carriable.Body;
-        joint.enabled = true;
-        joint.connectedBody = body;
+        Joint.enabled = true;
+        Joint.connectedBody = body;
     }
 
     public void DropDownCurrentCarriable(){
+        Debug.Log("Dropping Down");
+        GetComponent<Animator>().SetTrigger("Unhold");
         _carriable.OnDropDown();
         _carriable = null;
-        joint.enabled = false;
+        Joint.enabled = false;
     }
 
     public int GetCurrentPower()
@@ -160,6 +174,13 @@ public class PowerVolume : MonoBehaviour
     /// <param name="powerNum"></param>
     /// <returns>Actual powerNum that has been charged</returns>
     public int Charge(int powerNum){
+        foreach (var param in GetComponent<Animator>().parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                GetComponent<Animator>().ResetTrigger(param.name);
+            }
+        }
         var cur = PowerCurrent;
         cur = Math.Clamp(cur + powerNum, 0, powerUpLimit);
         var ret = cur - PowerCurrent;
@@ -169,12 +190,22 @@ public class PowerVolume : MonoBehaviour
 
     public bool IsCarrying() => _carriable != null;
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "Enemy")
+    public void UpdatePower(){
+        for (int i = 0; i < PowerCurrent; i++){
+            if (i >= powerContainer.childCount) return;
+            var child = powerContainer.GetChild(i).GetComponent<SpriteRenderer>();
+            child.enabled = true;
+        }
+
+        for (int i = PowerCurrent; i < powerContainer.childCount; i++){
+            powerContainer.GetChild(i).GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision){
+        if(collision.gameObject.CompareTag("Enemy"))
         {
             EventCenter.Broadcast(EventDefine.Lose);
         }
     }
-
 }

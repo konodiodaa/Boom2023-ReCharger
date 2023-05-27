@@ -23,6 +23,8 @@ namespace Player{
             if (volume.GetCurrentPower() == 0) return;
             if (_timer != 0) return;
             volume.PowerCurrent -= 1;
+            Debug.Log("Charge");
+            GetComponent<Animator>().SetTrigger("Charge");
             StartCoroutine(ChargeAnim());
             var num = Physics2D.OverlapCircle(transform.position, chargeRange, new(){useTriggers = true}, _targetColliders);
             if (num == 0) return;

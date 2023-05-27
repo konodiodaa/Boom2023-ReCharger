@@ -24,9 +24,19 @@ namespace Wires{
                 return closestPoint + norm * integrator.segColRadius;
             }
 
-            public bool IsFree(){
-                return true;
+            public Collider2D AvoidCollision(Vector2 testPosition, out Vector2 ret){
+                var col = Physics2D.OverlapCircle(testPosition, integrator.segColRadius, LayerMask.GetMask("Ground"));
+                if (col == null){
+                    ret = testPosition;
+                    return null;
+                }
+                var closestPoint = col.ClosestPoint(testPosition);
+                var norm = (testPosition - closestPoint).normalized; 
+                ret = closestPoint + norm * integrator.segColRadius;
+                return col;
             }
+
+            public bool IsFree() => true;
 
             public Vector2 Force{ set; get; } = Vector2.zero;
 

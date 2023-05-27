@@ -42,10 +42,5 @@ namespace Enemies{
         public void GetCharge(){
             Die();
         }
-
-        private void OnCollisionEnter2D(Collision2D other){
-            if (string.Compare(other.gameObject.tag, "Player", StringComparison.Ordinal) != 0) return;
-            // Player fail!
-        }
     }
 }

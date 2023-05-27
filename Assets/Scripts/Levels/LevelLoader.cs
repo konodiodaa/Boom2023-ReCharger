@@ -28,5 +28,9 @@ namespace Levels{
             yield return shade.Emerge(0.2f);
             LoadLevel(id);
         }
+
+        public void LoadNextLevel(){
+            
+        }
     }
 }

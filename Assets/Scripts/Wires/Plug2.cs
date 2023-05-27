@@ -64,6 +64,10 @@ namespace Wires{
             body.freezeRotation = true;
             _prevLayer = gameObject.layer;
             interaction.enabled = false;
+            
+            // _prevMass = body.mass;
+            // body.mass = 1f;
+            
             gameObject.layer = LayerMask.NameToLayer("NoCollision"); //LayerMask.GetMask("Carried");
             
         }
@@ -74,7 +78,18 @@ namespace Wires{
             _powerVolume = null;
             body.freezeRotation = false;
             interaction.enabled = true;
+            
+            // body.mass = _prevMass;
+            
             gameObject.layer = _prevLayer; //LayerMask.NameToLayer("");//LayerMask.GetMask("InteractionLayer");
+        }
+
+
+        private SpriteRenderer _renderer;
+
+        private void Awake(){
+            _renderer = GetComponent<SpriteRenderer>();
+            _prevMass = body.mass;
         }
 
         public void OnPlugIn(Socket socket){
@@ -83,7 +98,9 @@ namespace Wires{
             _pluggedSock = socket;
             _prevLayer = gameObject.layer;
             interaction.enabled = false;
+            _renderer.enabled = false;
             gameObject.layer = LayerMask.NameToLayer("NoCollision");
+            
         }
 
         public void OnPullOut(Socket socket){
@@ -92,9 +109,11 @@ namespace Wires{
             _pluggedSock = null;
             interaction.enabled = true;
             gameObject.layer = _prevLayer; // LayerMask.NameToLayer("InteractionLayer");
+            _renderer.enabled = true;
         }
 
-        public float Mass => state == State.Carried ? (_powerVolume.movement.rb.mass + body.mass) : body.mass;
+        public float Mass =>
+            state == State.Carried ? (_powerVolume.Movement.rb.mass + body.mass) : body.mass;
 
         public Vector2 Velocity{
             set{
@@ -102,15 +121,17 @@ namespace Wires{
                     body.velocity = Vector2.zero;
                     return;
                 }
-                // if (IsCarried) _powerVolume.movement.rb.velocity += value - body.velocity;
+
+                if (IsCarried && OtherEnd.state == State.Free) return;
                 body.velocity = value;
             }
-            get => IsCarried ? _powerVolume.movement.rb.velocity : body.velocity;
+            get => IsCarried ? _powerVolume.Movement.rb.velocity : body.velocity;
         }
 
         public Vector2 Position{
             set{
                 if (state is State.Plugged) return;
+                if (IsCarried && OtherEnd.state == State.Free) return;
                 body.MovePosition(value);
             }
             get => body.position;
@@ -125,21 +146,36 @@ namespace Wires{
             return testPosition;
         }
 
+        public Collider2D AvoidCollision(Vector2 testPosition, out Vector2 ret){
+            ret = testPosition;
+            return null;
+        }
+
         public bool IsFree(){
             return state == State.Free;
         }
 
         public void AvoidCollision(){ }
+        
+        
 
         private void FixedUpdate(){
             if (state == State.Plugged){
                 body.MovePosition(_pluggedSock.transform.position);
+            }
+
+            if (state == State.Carried){
+                if (_powerVolume.Movement.IsOnRise){
+                    body.mass = 0.01f;
+                } else{
+                    body.mass = _prevMass;
+                }
             }
         }
 
         public Vector2 DistanceDirection => (PrevSeg == null ? (Position - NextSeg.Position) : (PrevSeg.Position - Position) ).normalized;
 
         public Rigidbody2D Body => body;
-
+        
     }
 }

@@ -1,11 +1,22 @@
-﻿using Player;
+﻿using System;
+using Player;
 using UnityEngine;
+using Utility;
 using Wires;
 
 namespace Devices{
     public class Socket: MonoBehaviour, IInteractable{
+
+        public Sprite sprPlugged;
+        
         private Plug2 _plug = null;
         private IDevice _connectedDevice = null;
+        private SpriteRenderer _renderer;
+
+        private void Awake(){
+            _renderer = GetComponent<SpriteRenderer>();
+        }
+
 
         public void SetDevice(IDevice device){
             _connectedDevice = device;
@@ -37,12 +48,17 @@ namespace Devices{
         public bool IsActive(PowerVolume volume) => (volume.GetCarried() == null && _plug != null) ||
                                                     (volume.GetCarried() is Plug2 plug && _plug == null);
 
+
+        private Sprite _prev;
         public void PlugIn(Plug2 plug){
             _plug = plug;
             _plug.OnPlugIn(this);
             if (_connectedDevice != null){
                 IDevice.Connect(_connectedDevice, _plug);
             }
+
+            _prev = _renderer.sprite;
+            _renderer.sprite = sprPlugged;
         }
 
         public Plug2 PullOut(){
@@ -53,7 +69,18 @@ namespace Devices{
             if (_connectedDevice != null){
                 IDevice.Disconnect(_connectedDevice, ret);
             }
+
+            _renderer.sprite = _prev;
             return ret;
+        }
+        
+        public Outliner outliner;
+        public void OnFocused(PowerVolume volume){
+            outliner.enabled = true;
+        }
+
+        public void OnLoseFocus(PowerVolume volume){
+            outliner.enabled = false;
         }
     }
 }

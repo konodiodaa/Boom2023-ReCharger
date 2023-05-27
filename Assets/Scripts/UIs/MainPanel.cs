@@ -40,10 +40,7 @@ public class MainPanel : MonoBehaviour
 
     private void StartGame()
     {
-        // Debug.Log("Load Level 1");
-        // TODO: change to level 1 id
-        // SceneManager.LoadScene("Level 1");
-        levelLoader.LoadLevel(0);
+        levelLoader.LoadLevel(1);
     }
 
     private void QuitGame()

@@ -26,6 +26,10 @@ public class Collision : MonoBehaviour
     void Update()
     {
         onGround = Physics2D.OverlapCircle((Vector2)transform.position + bottomOffset, collisionRadius, groundLayer);
+        if (onGround)
+        {
+            GetComponent<Animator>().ResetTrigger("Jump");
+        }
     }
 
     private void OnDrawGizmos()

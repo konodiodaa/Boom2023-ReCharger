@@ -15,6 +15,11 @@ namespace Wires{
                 return testPosition;
             }
 
+            public Collider2D AvoidCollision(Vector2 testPosition, out Vector2 ret){
+                ret = testPosition;
+                return null;
+            }
+
             public bool IsFree(){
                 return false;
             }

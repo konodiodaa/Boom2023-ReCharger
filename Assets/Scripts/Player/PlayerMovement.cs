@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     public float speed;
     public float jumpForce;
 
-    private bool doubleJump; // if allow doulbe jump
+    private bool canDoubleJump; // if allow doulbe jump
 
     [Space]
     [Header("Dash properties")]
@@ -55,7 +55,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
-        doubleJump = true;
+        canDoubleJump = true;
         coll = GetComponent<Collision>();
         powVol = GetComponent<PowerVolume>();
         aab = GetComponent<PlayerCharge>();
@@ -67,10 +67,9 @@ public class PlayerMovement : MonoBehaviour
         if(!isDashing)
         {
             Movement();
-            Dash();
+            DashMovement();
         }
-        if(isDashing)
-            CheckDash();
+        CheckDash();
     }
 
     private void Movement()
@@ -78,7 +77,12 @@ public class PlayerMovement : MonoBehaviour
         moveInput = Input.GetAxis("Horizontal");
         if(moveInput != 0)
         {
+            // Debug.Log("Walk");
+            GetComponent<Animator>().SetTrigger("Walk");
             faceDir = moveInput > 0 ? 1 : -1;
+        } else
+        {
+            GetComponent<Animator>().ResetTrigger("Walk");
         }
 
         if (Input.GetButtonDown("Jump"))
@@ -86,12 +90,16 @@ public class PlayerMovement : MonoBehaviour
             if (coll.onGround)
             {
                 Jump(Vector2.up);
+                // Debug.Log("Jump");
+                GetComponent<Animator>().SetTrigger("Jump");
             }
-            else if(doubleJump && powVol.GetCurrentPower() > 0)
+            else if(canDoubleJump && powVol.GetCurrentPower() > 0)
             {
                 powVol.PowerChange(-1);
-                doubleJump = false;
+                canDoubleJump = false;
+                GetComponent<Animator>().SetTrigger("DoubleJump");
                 Jump(Vector2.up);
+                // Debug.Log("Double Jump");
             }
         }
 
@@ -102,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (coll.onGround)
         {
-            doubleJump = true;
+            canDoubleJump = true;
         }
         isOutofRange();
     }
@@ -118,12 +126,16 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void Dash()
+    private void DashMovement()
     {
-        if (Input.GetButtonDown("Dash") && powVol.GetCarried() != null) 
+        if (Input.GetButtonDown("Dash"))// && powVol.GetCarried() != null) 
         {
-            if (Time.time >= (lastDash + dashCooldown) && powVol.GetCurrentPower() > 1)
-                Attempt2Dash();
+            if (Time.time >= (lastDash + dashCooldown) && powVol.GetCurrentPower() > 0)
+            {
+                StartDash();
+                Debug.Log("Dash");
+                GetComponent<Animator>().SetTrigger("Dash");
+            }
         }
     }
     
@@ -131,44 +143,41 @@ public class PlayerMovement : MonoBehaviour
     private float _prevMass;
     private bool _onRise = false;
     private void Jump(Vector2 dir){
-        rb.velocity = new Vector2(rb.velocity.x, 0);
-        rb.velocity += dir * jumpForce;
+        rb.velocity = new Vector2(rb.velocity.x, 0) + dir * (jumpForce * (powVol.IsCarrying() ? 1 : 1));
         _onRise = true;
     }
+
+    private float _prevGravityScale;
     
-    private void Attempt2Dash()
-    {
+    private void StartDash(){
         powVol.PowerChange(-1);
         isDashing = true;
         dashTimeLeft = dashTime;
         lastDash = Time.time;
-
+        _prevGravityScale = rb.gravityScale;
+        rb.gravityScale = 0;
         PlayerAfterImagePool.Instance.GetFromPool();
     }
 
-    private void CheckDash()
-    {
-        if (isDashing)
-        {
-            if (dashTimeLeft > 0)
-            {
-                rb.gravityScale = 0;
-                rb.velocity = new Vector2(dashSpeed * faceDir, rb.velocity.y);
-                dashTimeLeft -= Time.deltaTime;
-            }
-
-            if (Mathf.Abs(transform.position.x - lastImageXpos) > dashAfterImageDistance)
-            {
-                PlayerAfterImagePool.Instance.GetFromPool();
-                lastImageXpos = transform.position.x;
-            }
-
-            if (dashTimeLeft < 0)
-            {
-                rb.gravityScale = 3;
-                isDashing = false;
-            }
+    private void EndDash(){
+        isDashing = false;
+        rb.gravityScale = _prevGravityScale;
+    }
+    
+    
+    private void CheckDash(){
+        if (!isDashing) return;
+        if (dashTimeLeft > 0){
+            rb.velocity = new Vector2(dashSpeed * faceDir, rb.velocity.y);
+            dashTimeLeft -= Time.deltaTime;
+        } else{
+            EndDash();
         }
+
+        if (!(Mathf.Abs(transform.position.x - lastImageXpos) > dashAfterImageDistance)) return;
+        PlayerAfterImagePool.Instance.GetFromPool();
+        lastImageXpos = transform.position.x;
+
     }
 
     public bool IsOnRise => _onRise;
