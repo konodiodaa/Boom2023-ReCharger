@@ -1,3 +1,5 @@
 ﻿namespace Enemies{
-    public interface IEnemy{ }
+    public interface IEnemy{
+        bool IsDead{ get; }
+    }
 }
