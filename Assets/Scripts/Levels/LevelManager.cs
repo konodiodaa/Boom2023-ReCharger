@@ -4,7 +4,7 @@ using Levels;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour{
-    public const int LevelMax = 3;
+    public const int LevelMax = 8;
     public LevelLoader loader;
     public LevelInfo info;
 
