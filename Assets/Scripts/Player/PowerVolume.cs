@@ -205,6 +205,7 @@ public class PowerVolume : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision){
         if (Movement.IsDead) return;
         if(collision.gameObject.CompareTag("Enemy") && collision.gameObject.GetComponent<IEnemy>() is {IsDead: false}){
+            Movement.IsDead = true;
             EventCenter.Broadcast(EventDefine.Lose);
         }
     }

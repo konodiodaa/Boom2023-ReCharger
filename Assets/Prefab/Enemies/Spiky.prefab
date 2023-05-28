@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2503770439299401643
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8820891573878161676}
+  m_Layer: 10
+  m_Name: End
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8820891573878161676
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2503770439299401643}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7024692861154842920}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7024692861154842923
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,6 +44,7 @@ GameObject:
   - component: {fileID: 7024692861154842927}
   - component: {fileID: 7024692861154842924}
   - component: {fileID: 2363095447416060735}
+  - component: {fileID: 1459529737176874356}
   m_Layer: 10
   m_Name: Spiky
   m_TagString: Enemy
@@ -31,7 +63,8 @@ Transform:
   m_LocalPosition: {x: 0.83, y: -1.39, z: -0.0115121305}
   m_LocalScale: {x: 0.22891566, y: 0.3461539, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8820891573878161676}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -100,7 +133,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   renderer: {fileID: 7024692861154842921}
-  isDead: 0
 --- !u!61 &7024692861154842924
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -143,3 +175,18 @@ MonoBehaviour:
   rightOffset: 0
   patrolSpeed: 0
   isPatrolling: 1
+--- !u!114 &1459529737176874356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7024692861154842923}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c597b18f6f4293bcb65316f8fd069c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endTrans: {fileID: 8820891573878161676}
+  speed: 0
+  isReverse: 0
